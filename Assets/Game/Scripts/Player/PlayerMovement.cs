@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -10,6 +11,7 @@ public class PlayerMovement : MonoBehaviour
     private float maxHealth = 100;
     [SerializeField] private float currentHealth;
     public float damagePlayer;
+    public Slider healthBar;
     //camera,movement
     [SerializeField] private Camera m_Camera;
     [SerializeField] CharacterController characterController;
@@ -38,7 +40,7 @@ public class PlayerMovement : MonoBehaviour
         if (state != PlayerState.Die)
         {
             Movement();
-            Attack();
+            //Attack();
         }
     }
     private void Movement()
@@ -83,7 +85,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if(Input.GetMouseButtonDown(0))
         {
-            state = PlayerState.Attack;
             m_Animator.SetBool(Constant.ANIM_ATTACK, true);
         }
         else
@@ -92,12 +93,21 @@ public class PlayerMovement : MonoBehaviour
         }
         if(Input.GetKeyDown(KeyCode.E))
         {
-            state = PlayerState.Attack;
             m_Animator.SetBool(Constant.ANIM_SKILL, true);
         }
         else
         {
             m_Animator.SetBool(Constant.ANIM_SKILL, false);
+        }
+    }
+    public void takeDamage(float damage)
+    {
+        currentHealth -= damage;
+        healthBar.value=currentHealth;
+        if (currentHealth <= 0)
+        {
+            //die
+            
         }
     }
 }
