@@ -5,8 +5,9 @@ public class Items : ScriptableObject
 {
     public int id;
     public string itemName;
+    public bool stackable;
     public Type type;
-    public int value;
+    public float value;
     public Sprite icon;
 }
 public enum Type

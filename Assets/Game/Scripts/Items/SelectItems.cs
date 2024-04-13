@@ -5,7 +5,7 @@ using UnityEngine.UI;
 
 public class SelectItems : MonoBehaviour
 {
-    [SerializeField] private GameObject selectUI;
+    private GameObject selectUI;
     public Items Item;
     public void PickUpItem()
     {

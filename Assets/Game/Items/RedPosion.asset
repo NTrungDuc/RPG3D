@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 2
   itemName: RedPosion
+  stackable: 1
   type: 1
   value: 10
   icon: {fileID: 395905918, guid: 6a2954e55e112cb429d7e8f21f61aaf5, type: 3}

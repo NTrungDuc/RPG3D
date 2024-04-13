@@ -10,7 +10,7 @@ public class PlayerMovement : MonoBehaviour
     //infor
     private float maxHealth = 100;
     [SerializeField] private float currentHealth;
-    public float damagePlayer;
+
     public Slider healthBar;
     //camera,movement
     [SerializeField] private Camera m_Camera;
@@ -40,7 +40,6 @@ public class PlayerMovement : MonoBehaviour
         if (state != PlayerState.Die)
         {
             Movement();
-            //Attack();
         }
     }
     private void Movement()
@@ -81,23 +80,39 @@ public class PlayerMovement : MonoBehaviour
         transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, RotationSpeed * Time.deltaTime);
         
     }
-    private void Attack()
+    public void Attack()
     {
-        if(Input.GetMouseButtonDown(0))
+        if(Input.GetMouseButton(0))
         {
+            state = PlayerState.Attack;
             m_Animator.SetBool(Constant.ANIM_ATTACK, true);
         }
         else
         {
             m_Animator.SetBool(Constant.ANIM_ATTACK, false);
         }
-        if(Input.GetKeyDown(KeyCode.E))
+        if (Input.GetKeyUp(KeyCode.E))
         {
+            state = PlayerState.Attack;
             m_Animator.SetBool(Constant.ANIM_SKILL, true);
         }
         else
         {
             m_Animator.SetBool(Constant.ANIM_SKILL, false);
+        }
+    }
+    public void UsePosion(float value)
+    {
+        if (currentHealth < 100)
+        {
+            currentHealth += value;
+            currentHealth = Mathf.Clamp(currentHealth, 0, 100);
+            healthBar.value = currentHealth;
+            InventoryManager.Instance.refreshCountItem();
+        }
+        else
+        {
+            Debug.Log("Full HP");
         }
     }
     public void takeDamage(float damage)
@@ -107,7 +122,7 @@ public class PlayerMovement : MonoBehaviour
         if (currentHealth <= 0)
         {
             //die
-            
+            state = PlayerState.Die;
         }
     }
 }

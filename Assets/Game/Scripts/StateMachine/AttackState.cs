@@ -17,7 +17,7 @@ public class AttackState : IState
         timer += Time.deltaTime;
         if (timer > timeDelay)
         {
-            bot.ChangeState(new IdleState());
+            bot.ChangeState(new PatrolState());
         }
     }
     public void OnExit(BotController bot)

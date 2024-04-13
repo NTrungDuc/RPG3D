@@ -10,7 +10,6 @@ public class BotController : MonoBehaviour
     [SerializeField] private int id;
     private float enemyMaxHealth = 100;
     [SerializeField] private float currentHealth;
-    public float damageEnemy;
     //patrol
     private NavMeshAgent agent;
     [SerializeField] private float range;
@@ -53,9 +52,7 @@ public class BotController : MonoBehaviour
     }
     public void SetRandomTargetFollow()
     {
-        ChangeAnim(Constant.ANIM_RUN, true);
-        ChangeAnim(Constant.ANIM_ATTACK, false);
-        agent.isStopped = false;
+        Run();
         patrolPoint = GetRandomPointOnNavMesh(centrePoint.position, range);
         agent.SetDestination(patrolPoint);
     }
@@ -76,8 +73,15 @@ public class BotController : MonoBehaviour
     {
         if (IsHaveTargetInRange(range))
         {
+            Run();
             agent.SetDestination(Target.position);
         }
+    }
+    public void Run()
+    {
+        ChangeAnim(Constant.ANIM_RUN, true);
+        ChangeAnim(Constant.ANIM_ATTACK, false);
+        agent.isStopped = false;
     }
     public bool IsHaveTargetInRange(float range)
     {

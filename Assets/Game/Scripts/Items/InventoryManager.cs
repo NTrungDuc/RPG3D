@@ -6,7 +6,7 @@ using UnityEngine.UI;
 public class InventoryManager : MonoBehaviour
 {
     private static InventoryManager instance;
-    public static InventoryManager Instance {  get { return instance; } }
+    public static InventoryManager Instance { get { return instance; } }
     public int maxStackItem = 4;
     public InventorySlot[] inventorySlots;
     public GameObject inventoryItemPrefab;
@@ -20,13 +20,21 @@ public class InventoryManager : MonoBehaviour
     }
     private void Update()
     {
+        inputSelectItem();
+    }
+    public void inputSelectItem()
+    {
         if (Input.inputString != null)
         {
             bool isNumber = int.TryParse(Input.inputString, out int number);
-            if(isNumber && number > 0 && number < 7)
+            if (isNumber && number > 0 && number < 7)
             {
                 ChangeSelectedSlot(number - 1);
             }
+        }
+        if (selectedSlot != -1)
+        {
+            GetItemSelected();
         }
     }
     void ChangeSelectedSlot(int newValue)
@@ -45,7 +53,7 @@ public class InventoryManager : MonoBehaviour
         {
             InventorySlot slot = inventorySlots[i];
             InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
-            if (itemInSlot != null && itemInSlot.item == item && itemInSlot.count < maxStackItem)
+            if (itemInSlot != null && itemInSlot.item == item && itemInSlot.count < maxStackItem && itemInSlot.item.stackable == true)
             {
                 itemInSlot.count++;
                 itemInSlot.RefreshCount();
@@ -56,7 +64,7 @@ public class InventoryManager : MonoBehaviour
         for (int i = 0; i < inventorySlots.Length; i++)
         {
             InventorySlot slot = inventorySlots[i];
-            InventoryItem itemInSlot=slot.GetComponentInChildren<InventoryItem>();
+            InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
             if (itemInSlot == null)
             {
                 SpawnNewItem(item, slot);
@@ -66,10 +74,37 @@ public class InventoryManager : MonoBehaviour
 
         return false;
     }
-    void SpawnNewItem(Items item,InventorySlot slot)
+    void SpawnNewItem(Items item, InventorySlot slot)
     {
         GameObject newItemGo = Instantiate(inventoryItemPrefab, slot.transform);
-        InventoryItem inventoryItem=newItemGo.GetComponent<InventoryItem>();
+        InventoryItem inventoryItem = newItemGo.GetComponent<InventoryItem>();
         inventoryItem.InitialiseItem(item);
+    }
+
+    public void GetItemSelected()
+    {
+        InventorySlot slot = inventorySlots[selectedSlot];
+        InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
+        if (itemInSlot != null)
+        {
+            ItemInHand[itemInSlot.item.id - 1].GetComponent<UseItem>().Use();
+        }
+    }
+    public void refreshCountItem()
+    {
+        InventorySlot slot = inventorySlots[selectedSlot];
+        InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
+
+        itemInSlot.count--;
+        if (itemInSlot.count <= 0)
+        {
+            Destroy(itemInSlot.gameObject);
+            ItemInHand[itemInSlot.item.id - 1].SetActive(false);
+        }
+        else
+        {
+            itemInSlot.RefreshCount();
+        }
+
     }
 }
