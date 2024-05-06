@@ -1,12 +1,12 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Cinemachine;
 
 public class LockCursor : MonoBehaviour
 {
-    void Start()
+    private void Start()
     {
-        //esc
         Cursor.visible = false;
         Cursor.lockState = CursorLockMode.Locked;
     }

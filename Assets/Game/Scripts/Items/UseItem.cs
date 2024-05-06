@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UseItem : MonoBehaviour
 {
-    public enum Type { PlayerSword, EnemyAxe, PosionRed };
+    public enum Type { PlayerSword, EnemyAxe, PosionRed, PlayerSkill };
     public Type type;
 
     [SerializeField] private float value;
@@ -39,6 +39,13 @@ public class UseItem : MonoBehaviour
             {
                 other.GetComponent<PlayerMovement>().takeDamage(value);
                 hasAttacked = true;
+            }
+        }
+        if(type == Type.PlayerSkill)
+        {
+            if (other.CompareTag(Constant.TAG_ENEMY))
+            {
+                Debug.Log("skill vfx");
             }
         }
     }

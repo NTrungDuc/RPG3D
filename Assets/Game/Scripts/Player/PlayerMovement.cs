@@ -1,3 +1,4 @@
+using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,24 +10,40 @@ public class PlayerMovement : MonoBehaviour
     public static PlayerMovement Instance { get { return instance; } }
     //infor
     private float maxHealth = 100;
-    [SerializeField] private float currentHealth;
+    private float currentHealth;
+    float attackRange = 5f;
+    public PlayerState state;
 
     public Slider healthBar;
+    private float staminaValue = 90;
+    public Slider staminaBar;
+    bool isUseStamina = false;
     //camera,movement
+    [SerializeField] private CinemachineFreeLook cinemachineFreeLook;
     [SerializeField] private Camera m_Camera;
     [SerializeField] CharacterController characterController;
     [SerializeField] private Animator m_Animator;
     [SerializeField] private float speed = 4f;
-    
+
     private float RotationSpeed = 15;
-    
+
     float mDesiredRotation = 0f;
+    //skill
+    [SerializeField] private ParticleSystem ultimateEffect;
+    [SerializeField] private Transform posUltimate;
+    [SerializeField] private Image UltimateSkill;
+    float timeCDSkill = 10f;
+    bool isUseSkill = false;
     //jump,gravity
     float mSpeedY = 0;
     float mGravity = -9.81f;
     [SerializeField] private float JumpSpeed = 4f;
-    //
-    public PlayerState state;
+
+    //Panel
+    [SerializeField] private GameObject PanelInventory;
+    bool isOpenInventory = false;
+
+
     private void Awake()
     {
         instance = this;
@@ -39,7 +56,10 @@ public class PlayerMovement : MonoBehaviour
     {
         if (state != PlayerState.Die)
         {
+
             Movement();
+            Inventory();
+            CDSkill();
         }
     }
     private void Movement()
@@ -63,43 +83,162 @@ public class PlayerMovement : MonoBehaviour
             mSpeedY += mGravity * Time.deltaTime;
             m_Animator.SetBool(Constant.ANIM_JUMP, false);
         }
+        PlayerSprint();
+        //restore stamina
+        if (!isUseStamina)
+        {
+            if (staminaValue < 90) {
+                //Debug.Log("restore");
+                ModifyStamina(10);
+            }
+        }
         characterController.Move((rotateMovement * speed + verticalMovement) * Time.deltaTime);
         if (rotateMovement.magnitude > 0)
         {
             mDesiredRotation = Mathf.Atan2(rotateMovement.x, rotateMovement.z) * Mathf.Rad2Deg;
             m_Animator.SetBool(Constant.ANIM_RUN, true);
             state = PlayerState.Moving;
+            
         }
         else
         {
             m_Animator.SetBool(Constant.ANIM_RUN, false);
+            
             state = PlayerState.Idle;
+            isUseStamina = false;
+            m_Animator.SetBool(Constant.ANIM_SPRINT, false);
         }
+
+
         Quaternion currentRotation = transform.rotation;
         Quaternion targetRotation = Quaternion.Euler(0, mDesiredRotation, 0);
         transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, RotationSpeed * Time.deltaTime);
-        
+
     }
-    public void Attack()
+    public void PlayerSprint()
     {
-        if(Input.GetMouseButton(0))
+        if (Input.GetKey(KeyCode.LeftShift))
         {
-            state = PlayerState.Attack;
-            m_Animator.SetBool(Constant.ANIM_ATTACK, true);
+            if (state == PlayerState.Moving)
+            {
+                if (staminaValue > 0)
+                {
+                    isUseStamina = true;
+                    ModifyStamina(-10);
+
+                    speed = 8;
+                    m_Animator.SetBool(Constant.ANIM_SPRINT, true);
+                }
+                else
+                {
+                    speed = 4;
+                    m_Animator.SetBool(Constant.ANIM_SPRINT, false);
+                }
+            }
+
         }
         else
         {
+            isUseStamina = false;
+          
+
+            speed = 4;
+            m_Animator.SetBool(Constant.ANIM_SPRINT, false);
+        }
+    }
+
+    public void Attack()
+    {
+        GameObject nearestEnemy = FindNearestEnemy();
+        if (Input.GetMouseButton(0))
+        {
+            if (staminaValue > 0)
+            {
+                isUseStamina = true;
+                ModifyStamina(-10);
+
+                state = PlayerState.Attack;
+                m_Animator.SetBool(Constant.ANIM_ATTACK, true);
+                //target enemy
+                TargetEnemy(nearestEnemy);
+            }
+            else
+            {
+                m_Animator.SetBool(Constant.ANIM_ATTACK, false);
+            }
+        }
+        else
+        {
+            isUseStamina = false;
             m_Animator.SetBool(Constant.ANIM_ATTACK, false);
         }
         if (Input.GetKeyUp(KeyCode.E))
         {
+            //use skill
             state = PlayerState.Attack;
-            m_Animator.SetBool(Constant.ANIM_SKILL, true);
+            UltimateSkill.fillAmount = 1;
+            if (!isUseSkill)
+            {  
+                StartCoroutine(EffectSKill(ultimateEffect, 4f, timeCDSkill));
+            }
         }
-        else
+    }
+    void CDSkill()
+    {
+        if (isUseSkill)
         {
-            m_Animator.SetBool(Constant.ANIM_SKILL, false);
+            UltimateSkill.fillAmount -= 1 / (timeCDSkill + 4) * Time.deltaTime;
+            if (UltimateSkill.fillAmount <= 0)
+            {
+                UltimateSkill.fillAmount = 0;
+            }
         }
+    }
+    IEnumerator EffectSKill(ParticleSystem skill, float time, float timeCD)
+    {
+        isUseSkill = true;
+        skill.transform.position = posUltimate.position;
+        skill.gameObject.SetActive(true);
+        yield return new WaitForSeconds(time);
+        skill.gameObject.SetActive(false);
+        yield return new WaitForSeconds(timeCD);
+        isUseSkill = false;
+    }
+    void TargetEnemy(GameObject target)
+    {
+        if (target != null)
+        {
+            Vector3 direction = target.transform.position - transform.position;
+            direction.y = 0f;
+
+            Quaternion targetRotation = Quaternion.LookRotation(direction);
+
+            transform.rotation = Quaternion.Lerp(transform.rotation, targetRotation, RotationSpeed * Time.deltaTime);
+        }
+    }
+    GameObject FindNearestEnemy()
+    {
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        GameObject nearestEnemy = null;
+        float nearestDistance = Mathf.Infinity;
+
+        foreach (GameObject enemy in enemies)
+        {
+            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+            if (distance < nearestDistance && distance <= attackRange)
+            {
+                nearestEnemy = enemy;
+                nearestDistance = distance;
+            }
+        }
+
+        return nearestEnemy;
+    }
+    void ModifyStamina(float delta)
+    {
+        staminaValue += delta * Time.deltaTime;
+        staminaValue = Mathf.Clamp(staminaValue, 0, 90);
+        staminaBar.value = staminaValue;
     }
     public void UsePosion(float value)
     {
@@ -115,10 +254,34 @@ public class PlayerMovement : MonoBehaviour
             Debug.Log("Full HP");
         }
     }
+    public void Inventory()
+    {
+        if (Input.GetKeyDown(KeyCode.B))
+        {
+            if (!isOpenInventory)
+            {
+                isOpenInventory = true;
+                PanelInventory.SetActive(true);
+                Cursor.visible = true;
+                cinemachineFreeLook.enabled = false;
+                Cursor.lockState = CursorLockMode.None;
+                Time.timeScale = 0f;
+            }
+            else
+            {
+                isOpenInventory = false;
+                PanelInventory.SetActive(false);
+                Cursor.visible = false;
+                cinemachineFreeLook.enabled = true;
+                Cursor.lockState = CursorLockMode.Locked;
+                Time.timeScale = 1f;
+            }
+        }
+    }
     public void takeDamage(float damage)
     {
         currentHealth -= damage;
-        healthBar.value=currentHealth;
+        healthBar.value = currentHealth;
         if (currentHealth <= 0)
         {
             //die
