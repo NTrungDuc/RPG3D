@@ -18,6 +18,8 @@ public class PlayerMovement : MonoBehaviour
     private float staminaValue = 90;
     public Slider staminaBar;
     bool isUseStamina = false;
+    bool isAttack = false;
+    bool isSprint = false;
     //camera,movement
     [SerializeField] private CinemachineFreeLook cinemachineFreeLook;
     [SerializeField] private Camera m_Camera;
@@ -85,13 +87,7 @@ public class PlayerMovement : MonoBehaviour
         }
         PlayerSprint();
         //restore stamina
-        if (!isUseStamina)
-        {
-            if (staminaValue < 90) {
-                //Debug.Log("restore");
-                ModifyStamina(10);
-            }
-        }
+        RestoreStamina();
         characterController.Move((rotateMovement * speed + verticalMovement) * Time.deltaTime);
         if (rotateMovement.magnitude > 0)
         {
@@ -105,7 +101,6 @@ public class PlayerMovement : MonoBehaviour
             m_Animator.SetBool(Constant.ANIM_RUN, false);
             
             state = PlayerState.Idle;
-            isUseStamina = false;
             m_Animator.SetBool(Constant.ANIM_SPRINT, false);
         }
 
@@ -115,6 +110,24 @@ public class PlayerMovement : MonoBehaviour
         transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, RotationSpeed * Time.deltaTime);
 
     }
+    void RestoreStamina()
+    {
+        if(!isAttack && !isSprint)
+        {
+            isUseStamina = false;
+        }
+        else
+        {
+            isUseStamina = true;
+        }
+        if (!isUseStamina)
+        {
+            if (staminaValue < 90)
+            {
+                ModifyStamina(10);
+            }
+        }
+    }
     public void PlayerSprint()
     {
         if (Input.GetKey(KeyCode.LeftShift))
@@ -123,7 +136,7 @@ public class PlayerMovement : MonoBehaviour
             {
                 if (staminaValue > 0)
                 {
-                    isUseStamina = true;
+                    isSprint = true;
                     ModifyStamina(-10);
 
                     speed = 8;
@@ -139,8 +152,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            isUseStamina = false;
-          
+            isSprint = false;
 
             speed = 4;
             m_Animator.SetBool(Constant.ANIM_SPRINT, false);
@@ -154,7 +166,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (staminaValue > 0)
             {
-                isUseStamina = true;
+                isAttack = true;
                 ModifyStamina(-10);
 
                 state = PlayerState.Attack;
@@ -169,7 +181,7 @@ public class PlayerMovement : MonoBehaviour
         }
         else
         {
-            isUseStamina = false;
+            isAttack = false;
             m_Animator.SetBool(Constant.ANIM_ATTACK, false);
         }
         if (Input.GetKeyUp(KeyCode.E))
