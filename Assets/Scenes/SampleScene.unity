@@ -2809,6 +2809,7 @@ GameObject:
   - component: {fileID: 362834216}
   - component: {fileID: 362834215}
   - component: {fileID: 362834217}
+  - component: {fileID: 362834218}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -2908,6 +2909,24 @@ CapsuleCollider:
   m_Height: 1.542144
   m_Direction: 1
   m_Center: {x: 0, y: 0.777598, z: 0}
+--- !u!114 &362834218
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 362834213}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 36e7b8e0d1b6d0b4193ee075dbbf6fe8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  level: 1
+  currentXP: 0
+  baseRequiredXP: 100
+  xpMultiplier: 1.5
+  textEXP: {fileID: 241234234}
+  expBar: {fileID: 1679959776}
 --- !u!1 &365670011
 GameObject:
   m_ObjectHideFlags: 0
@@ -16061,6 +16080,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   id: 0
   currentHealth: 0
+  experienceValue: 10
+  playerExp: {fileID: 362834218}
   range: 10
   Target: {fileID: 362834214}
   centrePoint: {fileID: 2075197679}

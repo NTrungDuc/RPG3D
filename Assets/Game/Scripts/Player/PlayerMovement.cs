@@ -8,7 +8,7 @@ public class PlayerMovement : MonoBehaviour
 {
     private static PlayerMovement instance;
     public static PlayerMovement Instance { get { return instance; } }
-    //infor
+    //information player
     private float maxHealth = 100;
     private float currentHealth;
     float attackRange = 5f;

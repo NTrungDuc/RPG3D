@@ -6,10 +6,12 @@ using UnityEngine.SocialPlatforms.Impl;
 
 public class BotController : MonoBehaviour
 {
-    //infor 
+    //information
     [SerializeField] private int id;
-    private float enemyMaxHealth = 100;
+    private float enemyMaxHealth = 10;
     [SerializeField] private float currentHealth;
+    [SerializeField] private int experienceValue = 10;
+    [SerializeField] private LevelUp playerExp;
     //patrol
     private NavMeshAgent agent;
     [SerializeField] private float range;
@@ -126,5 +128,6 @@ public class BotController : MonoBehaviour
         ChangeAnim(Constant.ANIM_DIE, true);
         yield return new WaitForSeconds(3f);
         gameObject.SetActive(false);
+        playerExp.GainXP(experienceValue);
     }
 }

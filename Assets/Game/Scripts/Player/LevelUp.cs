@@ -16,7 +16,6 @@ public class LevelUp : MonoBehaviour
     {
         currentXP += xp;
         
-        Debug.Log(CalculateRequiredXP());
         if (currentXP >= CalculateRequiredXP())
         {
             LevelUpPlayer();
