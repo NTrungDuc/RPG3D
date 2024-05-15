@@ -8,9 +8,9 @@ public class BotController : MonoBehaviour
 {
     //information
     [SerializeField] private int id;
-    private float enemyMaxHealth = 10;
+    private float enemyMaxHealth = 100;
     [SerializeField] private float currentHealth;
-    [SerializeField] private int experienceValue = 10;
+    [SerializeField] private int experienceValue = 30;
     [SerializeField] private LevelUp playerExp;
     //patrol
     private NavMeshAgent agent;

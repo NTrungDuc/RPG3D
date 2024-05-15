@@ -31,9 +31,9 @@ public class LevelUp : MonoBehaviour
         int requiredXP = CalculateRequiredXP();
         level++;
         currentXP -= requiredXP;
-        
-        //upgrade hp,skill....
 
+        //upgrade hp,skill....
+        PlayerMovement.Instance.UpgradeStats(1.2f, 1.1f, level);
     }
     void UpdateUI()
     {

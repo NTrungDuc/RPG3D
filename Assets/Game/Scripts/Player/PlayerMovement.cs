@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static Cinemachine.DocumentationSortingAttribute;
 
 public class PlayerMovement : MonoBehaviour
 {
@@ -249,15 +250,15 @@ public class PlayerMovement : MonoBehaviour
     void ModifyStamina(float delta)
     {
         staminaValue += delta * Time.deltaTime;
-        staminaValue = Mathf.Clamp(staminaValue, 0, 90);
+        staminaValue = Mathf.Clamp(staminaValue, 0, staminaValue);
         staminaBar.value = staminaValue;
     }
     public void UsePosion(float value)
     {
-        if (currentHealth < 100)
+        if (currentHealth < maxHealth)
         {
             currentHealth += value;
-            currentHealth = Mathf.Clamp(currentHealth, 0, 100);
+            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
             healthBar.value = currentHealth;
             InventoryManager.Instance.refreshCountItem();
         }
@@ -274,21 +275,26 @@ public class PlayerMovement : MonoBehaviour
             {
                 isOpenInventory = true;
                 PanelInventory.SetActive(true);
-                Cursor.visible = true;
-                cinemachineFreeLook.enabled = false;
-                Cursor.lockState = CursorLockMode.None;
-                Time.timeScale = 0f;
+                LockCursor(true, CursorLockMode.None);
             }
             else
             {
                 isOpenInventory = false;
                 PanelInventory.SetActive(false);
-                Cursor.visible = false;
-                cinemachineFreeLook.enabled = true;
-                Cursor.lockState = CursorLockMode.Locked;
-                Time.timeScale = 1f;
+                LockCursor(false, CursorLockMode.Locked);
             }
         }
+    }
+    public void LockCursor(bool activeCursor, CursorLockMode mode)
+    {
+        Cursor.visible = activeCursor;
+        cinemachineFreeLook.enabled = !activeCursor;
+        Cursor.lockState = mode;
+    }
+    public void UpgradeStats(float healthLevelMultiplier, float staminaLevelMultiplier, int level)
+    {
+        Mathf.RoundToInt(maxHealth * Mathf.Pow(healthLevelMultiplier, level));
+        Mathf.RoundToInt(staminaValue * Mathf.Pow(staminaLevelMultiplier, level));
     }
     public void takeDamage(float damage)
     {
