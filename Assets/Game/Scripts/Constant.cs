@@ -12,4 +12,5 @@ public class Constant : MonoBehaviour
     public const string ANIM_DIE = "die";
     public const string TAG_ENEMY = "Enemy";
     public const string TAG_PLAYER = "Player";
+    public const string OPEN_CHEST = "isOpen";
 }

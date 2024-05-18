@@ -15,10 +15,6 @@ public class SimonSays : MonoBehaviour
     int randomCount = 6;
     [SerializeField] private Image BlurImage;
 
-    private void Start()
-    {
-        
-    }
     private void OnEnable()
     {
         PlayerMovement.Instance.LockCursor(true, CursorLockMode.None);
@@ -27,10 +23,7 @@ public class SimonSays : MonoBehaviour
     private void OnDisable()
     {
         PlayerMovement.Instance.LockCursor(false, CursorLockMode.Locked);
-        playerSequence.Clear();
-        result.Clear();
-        PreviewImage.color = Color.white;
-        BlurImage.gameObject.SetActive(true);
+        ResetValue();
     }
     IEnumerator PlaySequence()
     {
@@ -76,10 +69,19 @@ public class SimonSays : MonoBehaviour
         if(isCorrect)
         {
             Debug.Log("Correct sequence!");
+            InventoryManager.Instance.isWinMiniGame = true;
         }
         else
         {
             Debug.Log("Wrong sequence!");
+            ResetValue();
         }
+    }
+    void ResetValue()
+    {
+        playerSequence.Clear();
+        result.Clear();
+        PreviewImage.color = Color.white;
+        BlurImage.gameObject.SetActive(true);
     }
 }

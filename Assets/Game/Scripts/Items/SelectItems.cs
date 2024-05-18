@@ -31,6 +31,7 @@ public class SelectItems : MonoBehaviour
         if (other.CompareTag(Constant.TAG_PLAYER))
         {
             InventoryManager.Instance.txtPickUps.gameObject.SetActive(true);
+            InventoryManager.Instance.txtPickUps.text = "Press [F] to Pick Up!!";
             PickUpItem();
         }
     }

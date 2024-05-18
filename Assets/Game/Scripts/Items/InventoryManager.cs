@@ -13,7 +13,7 @@ public class InventoryManager : MonoBehaviour
     int selectedSlot = -1;
     [SerializeField] public Text txtPickUps;
     [SerializeField] public GameObject[] ItemInHand;
-
+    public bool isWinMiniGame = false;
     private void Awake()
     {
         instance = this;
