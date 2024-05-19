@@ -11,10 +11,18 @@ public class AsteroidGame : MonoBehaviour
     [SerializeField] private RectTransform spawnPos;
     int countDestroyed = 0;
     [SerializeField] private Text txtDestroyed;
+    [SerializeField] private int countDestoyed;
     float spawnDelay = 2f;
     private void OnEnable()
     {
         PlayerMovement.Instance.LockCursor(true, CursorLockMode.None);
+        foreach (var asteroid in asteroidPrefab)
+        {
+            if (asteroid.gameObject.activeSelf)
+            {
+                asteroid.gameObject.SetActive(false);
+            }
+        }
         InvokeRepeating("SpawnAsteroid", spawnDelay, spawnDelay);
     }
     private void OnDisable()
@@ -33,7 +41,10 @@ public class AsteroidGame : MonoBehaviour
                 asteroid.gameObject.SetActive(true);
                 asteroid.onClick.RemoveAllListeners();
                 asteroid.onClick.AddListener(() => ShootAsteroid(asteroid));
-                StartCoroutine(MoveAsteroid(asteroid));
+                if (gameObject.activeInHierarchy)
+                {
+                    StartCoroutine(MoveAsteroid(asteroid));
+                }
                 break;
             }
         }
@@ -49,7 +60,7 @@ public class AsteroidGame : MonoBehaviour
     {
         RectTransform asteroidRect = asteroid.GetComponent<RectTransform>();
         Vector2 direction = new Vector2(-1f, Random.Range(-0.5f, 0.5f)).normalized;
-        float speed = 150f;
+        float speed = 300f;
 
         while (asteroid != null && asteroid.gameObject.activeSelf)
         {
@@ -70,7 +81,7 @@ public class AsteroidGame : MonoBehaviour
     {
         countDestroyed++;
         txtDestroyed.text = "Destroyed: " + countDestroyed.ToString();
-        if (countDestroyed == 5)
+        if (countDestroyed == countDestoyed)
         {
             Debug.Log("Win");
             InventoryManager.Instance.isWinMiniGame = true;
@@ -78,10 +89,6 @@ public class AsteroidGame : MonoBehaviour
     }
     void ResetValue()
     {
-        countDestroyed = 0;
-        foreach (var asteroid in asteroidPrefab)
-        {
-            asteroid.gameObject.SetActive(false);
-        }
+        updateDestroyed();
     }
 }

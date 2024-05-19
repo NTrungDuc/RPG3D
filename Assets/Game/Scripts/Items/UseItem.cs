@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UseItem : MonoBehaviour
 {
-    public enum Type { PlayerSword, EnemyAxe, PosionRed, PlayerSkill };
+    public enum Type { PlayerSword, EnemyAxe, PosionRed, PlayerSkill, Staves_0, Staves_1, Staves_2 };
     public Type type;
 
     [SerializeField] private float value;
@@ -21,6 +21,18 @@ public class UseItem : MonoBehaviour
         if (type == Type.PlayerSword)
         {
             PlayerMovement.Instance.Attack();
+        }
+        if (type == Type.Staves_0)
+        {
+            PlayerMovement.Instance.useAbilities(0);
+        }
+        if (type == Type.Staves_1)
+        {
+            PlayerMovement.Instance.useAbilities(1);
+        }
+        if (type == Type.Staves_2)
+        {
+            PlayerMovement.Instance.useAbilities(2);
         }
     }
     private void OnTriggerEnter(Collider other)

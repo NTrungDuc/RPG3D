@@ -5,7 +5,6 @@ using UnityEngine.UI;
 
 public class SelectItems : MonoBehaviour
 {
-    private GameObject selectUI;
     public Items Item;
     public void PickUpItem()
     {

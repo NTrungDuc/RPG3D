@@ -32,7 +32,9 @@ public class PlayerMovement : MonoBehaviour
 
     float mDesiredRotation = 0f;
     //skill
-    [SerializeField] private ParticleSystem ultimateEffect;
+    [SerializeField] private ParticleSystem ultimateEffect_0;
+    [SerializeField] private ParticleSystem ultimateEffect_1;
+    [SerializeField] private ParticleSystem ultimateEffect_2;
     [SerializeField] private Transform posUltimate;
     [SerializeField] private Image UltimateSkill;
     float timeCDSkill = 10f;
@@ -95,12 +97,12 @@ public class PlayerMovement : MonoBehaviour
             mDesiredRotation = Mathf.Atan2(rotateMovement.x, rotateMovement.z) * Mathf.Rad2Deg;
             m_Animator.SetBool(Constant.ANIM_RUN, true);
             state = PlayerState.Moving;
-            
+
         }
         else
         {
             m_Animator.SetBool(Constant.ANIM_RUN, false);
-            
+
             state = PlayerState.Idle;
             m_Animator.SetBool(Constant.ANIM_SPRINT, false);
         }
@@ -113,7 +115,7 @@ public class PlayerMovement : MonoBehaviour
     }
     void RestoreStamina()
     {
-        if(!isAttack && !isSprint)
+        if (!isAttack && !isSprint)
         {
             isUseStamina = false;
         }
@@ -185,16 +187,33 @@ public class PlayerMovement : MonoBehaviour
             isAttack = false;
             m_Animator.SetBool(Constant.ANIM_ATTACK, false);
         }
+
+    }
+    public void useAbilities(int abilities)
+    {
+
         if (Input.GetKeyUp(KeyCode.E))
         {
             //use skill
             state = PlayerState.Attack;
             UltimateSkill.fillAmount = 1;
             if (!isUseSkill)
-            {  
-                StartCoroutine(EffectSKill(ultimateEffect, 4f, timeCDSkill));
+            {
+                switch (abilities)
+                {
+                    case 0:
+                        StartCoroutine(EffectSKill(ultimateEffect_0, 4f, timeCDSkill));
+                        break;
+                    case 1:
+                        StartCoroutine(EffectSKill(ultimateEffect_1, 4f, timeCDSkill));
+                        break;
+                    case 2:
+                        StartCoroutine(EffectSKill(ultimateEffect_2, 4f, timeCDSkill));
+                        break;
+                }
             }
         }
+
     }
     void CDSkill()
     {

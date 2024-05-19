@@ -7,6 +7,7 @@ public class OpenChest : MonoBehaviour
     [SerializeField] private Items Item;
     [SerializeField] private GameObject miniGame;
     [SerializeField] private Animator animator;
+    [SerializeField] private Collider Collider;
     IEnumerator Open()
     {
         if (Input.GetKey(KeyCode.F))
@@ -26,6 +27,7 @@ public class OpenChest : MonoBehaviour
             if (result)
             {
                 Debug.Log("Collected Item");
+                Collider.enabled = false;
             }
             yield return new WaitForSeconds(5f);
             Destroy(gameObject);
