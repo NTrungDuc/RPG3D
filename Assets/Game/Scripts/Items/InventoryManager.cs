@@ -85,7 +85,7 @@ public class InventoryManager : MonoBehaviour
     {
         InventorySlot slot = inventorySlots[selectedSlot];
         InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
-        if (itemInSlot != null)
+        if (itemInSlot != null && !PlayerMovement.Instance.isOpenInventory)
         {
             ItemInHand[itemInSlot.item.id - 1].GetComponent<UseItem>().Use();
         }

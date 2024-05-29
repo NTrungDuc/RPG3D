@@ -8,6 +8,8 @@ public class PatrolState : IState
     float duration;
     float attackRange = 2f;
     float chaseRange = 8f;
+    //boss
+    float jumpattackRange = 5f;
     public void OnEnter(BotController bot)
     {
         bot.SetRandomTargetFollow();
@@ -24,6 +26,10 @@ public class PatrolState : IState
         if (bot.IsHaveTargetInRange(attackRange) && timer > 1f)
         {
             bot.ChangeState(new AttackState());
+        }
+        if (bot.IsHaveTargetInRange(jumpattackRange))
+        {
+            bot.BossJumpAttack();
         }
     }
     public void OnExit(BotController bot)

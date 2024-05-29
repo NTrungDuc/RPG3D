@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class UseItem : MonoBehaviour
 {
-    public enum Type { PlayerSword, EnemyAxe, PosionRed, PlayerSkill, Staves_0, Staves_1, Staves_2 };
+    public enum Type { PlayerSword, EnemyAxe, PosionRed, PlayerSkill, Staves_0, Staves_1, Staves_2, EnemyKick };
     public Type type;
 
     [SerializeField] private float value;
@@ -45,12 +45,13 @@ public class UseItem : MonoBehaviour
                 hasAttacked = true;
             }
         }
-        if (type == Type.EnemyAxe)
+        if (type == Type.EnemyAxe || type == Type.EnemyKick)
         {
-            if (other.CompareTag(Constant.TAG_PLAYER) && !hasAttacked)
+            if (other.CompareTag(Constant.TAG_PLAYER))
             {
+                //Debug.Log("take damage");
+                gameObject.GetComponent<BoxCollider>().enabled = false;
                 other.GetComponent<PlayerMovement>().takeDamage(value);
-                hasAttacked = true;
             }
         }
         if(type == Type.PlayerSkill)

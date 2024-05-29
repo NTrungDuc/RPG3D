@@ -7,11 +7,15 @@ using UnityEngine.SocialPlatforms.Impl;
 public class BotController : MonoBehaviour
 {
     //information
+    public EnemyType enemyType;
     [SerializeField] private int id;
-    private float enemyMaxHealth = 100;
+    [SerializeField] private float enemyMaxHealth = 100;
     [SerializeField] private float currentHealth;
     [SerializeField] private int experienceValue = 30;
     [SerializeField] private LevelUp playerExp;
+    //col weapons
+    [SerializeField] private Collider axeCol;
+    [SerializeField] private Collider kickCol;
     //patrol
     private NavMeshAgent agent;
     [SerializeField] private float range;
@@ -20,6 +24,7 @@ public class BotController : MonoBehaviour
     [SerializeField] Transform Target;
     //component
     [SerializeField] private Transform centrePoint;
+    public bool isJumpAttack = true;
     private Animator animator;
     private IState currentState;
     public IState CurrentState { get => currentState; set => currentState = value; }
@@ -47,7 +52,7 @@ public class BotController : MonoBehaviour
     }
     public void checkDestination()
     {
-        if(Vector3.Distance(transform.position, patrolPoint) < 2.8f)
+        if (Vector3.Distance(transform.position, patrolPoint) < 2.8f)
         {
             ChangeAnim(Constant.ANIM_RUN, false);
         }
@@ -61,7 +66,7 @@ public class BotController : MonoBehaviour
     Vector3 GetRandomPointOnNavMesh(Vector3 origin, float distance)
     {
         Vector3 randomDirection = Random.insideUnitSphere;
-        randomDirection.y = 0f; 
+        randomDirection.y = 0f;
         randomDirection.Normalize();
 
         Vector3 randomPoint = origin + randomDirection * Random.Range(0f, distance);
@@ -82,7 +87,7 @@ public class BotController : MonoBehaviour
     public void Run()
     {
         ChangeAnim(Constant.ANIM_RUN, true);
-        ChangeAnim(Constant.ANIM_ATTACK, false);
+        ExitAttack();
         agent.isStopped = false;
     }
     public bool IsHaveTargetInRange(float range)
@@ -97,7 +102,66 @@ public class BotController : MonoBehaviour
     }
     public void Attack()
     {
-        ChangeAnim(Constant.ANIM_ATTACK, true);
+        if (enemyType == EnemyType.Normal)
+        {
+            axeCol.enabled = true;
+            ChangeAnim(Constant.ANIM_ATTACK, true);
+        }
+        if (enemyType == EnemyType.Boss)
+        {
+            int attackType = Random.Range(0, 4);
+            BossAttack(attackType);
+        }
+    }
+    public void BossAttack(int abilities)
+    {
+        switch (abilities)
+        {
+            case 0:
+                axeCol.enabled = true;
+                ChangeAnim(Constant.ANIM_ABILITIES_1, true);
+                break;
+            case 1:
+                axeCol.enabled = true;
+                ChangeAnim(Constant.ANIM_ABILITIES_2, true);
+                break;
+            case 2:
+                axeCol.enabled = true;
+                ChangeAnim(Constant.ANIM_ABILITIES_3, true);
+                break;
+            case 3:
+                kickCol.enabled = true;
+                ChangeAnim(Constant.ANIM_ABILITIES_4, true);
+                break;
+        }
+    }
+    public void ExitAttack()
+    {
+        if (enemyType == EnemyType.Normal)
+        {
+            ChangeAnim(Constant.ANIM_ATTACK, false);
+        }
+        if (enemyType == EnemyType.Boss)
+        {
+            ChangeAnim(Constant.ANIM_ABILITIES_1, false);
+            ChangeAnim(Constant.ANIM_ABILITIES_2, false);
+            ChangeAnim(Constant.ANIM_ABILITIES_3, false);
+            ChangeAnim(Constant.ANIM_ABILITIES_4, false);
+            ChangeAnim(Constant.ANIM_JUMP_ATTACK, false);
+        }
+    }
+    public void BossJumpAttack()
+    {
+        if (enemyType == EnemyType.Boss && isJumpAttack)
+        {
+            ChangeAnim(Constant.ANIM_JUMP_ATTACK, true);
+            StartCoroutine(WaitForAnimationJumpAttackToEnd());
+        }
+    }
+    private IEnumerator WaitForAnimationJumpAttackToEnd()
+    {
+        yield return new WaitForSeconds(3f);
+        isJumpAttack = false;
     }
     public void stopMoving()
     {
@@ -130,4 +194,9 @@ public class BotController : MonoBehaviour
         gameObject.SetActive(false);
         playerExp.GainXP(experienceValue);
     }
+}
+public enum EnemyType
+{
+    Normal,
+    Boss
 }

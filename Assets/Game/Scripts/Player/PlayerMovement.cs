@@ -46,7 +46,7 @@ public class PlayerMovement : MonoBehaviour
 
     //Panel
     [SerializeField] private GameObject PanelInventory;
-    bool isOpenInventory = false;
+    public bool isOpenInventory = false;
 
 
     private void Awake()
