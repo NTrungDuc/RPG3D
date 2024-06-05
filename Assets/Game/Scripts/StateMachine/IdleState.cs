@@ -9,7 +9,7 @@ public class IdleState : IState
     public void OnEnter(BotController bot)
     {
         bot.isJumpAttack = true;
-        ranTime = 1.5f;
+        ranTime = 1f;
         bot.ChangeAnim(Constant.ANIM_RUN, false);
         bot.stopMoving();
     }

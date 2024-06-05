@@ -21,12 +21,17 @@ public class PlayerMovement : MonoBehaviour
     bool isUseStamina = false;
     bool isAttack = false;
     bool isSprint = false;
+    bool isActiveShield = false;
+    //collider
+    [SerializeField] private Collider playerCol;
+    [SerializeField] private Collider shieldCol;
     //camera,movement
     [SerializeField] private CinemachineFreeLook cinemachineFreeLook;
     [SerializeField] private Camera m_Camera;
     [SerializeField] CharacterController characterController;
     [SerializeField] private Animator m_Animator;
-    [SerializeField] private float speed = 4f;
+    private float speed = 4f;
+    float initialSpeed;
 
     private float RotationSpeed = 15;
 
@@ -56,6 +61,7 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         currentHealth = maxHealth;
+        initialSpeed = speed;
     }
     private void Update()
     {
@@ -88,16 +94,14 @@ public class PlayerMovement : MonoBehaviour
             mSpeedY += mGravity * Time.deltaTime;
             m_Animator.SetBool(Constant.ANIM_JUMP, false);
         }
-        PlayerSprint();
-        //restore stamina
-        RestoreStamina();
+        Defend(); //shield
         characterController.Move((rotateMovement * speed + verticalMovement) * Time.deltaTime);
         if (rotateMovement.magnitude > 0)
         {
             mDesiredRotation = Mathf.Atan2(rotateMovement.x, rotateMovement.z) * Mathf.Rad2Deg;
             m_Animator.SetBool(Constant.ANIM_RUN, true);
             state = PlayerState.Moving;
-
+            PlayerSprint();
         }
         else
         {
@@ -111,6 +115,9 @@ public class PlayerMovement : MonoBehaviour
         Quaternion currentRotation = transform.rotation;
         Quaternion targetRotation = Quaternion.Euler(0, mDesiredRotation, 0);
         transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, RotationSpeed * Time.deltaTime);
+
+        //restore stamina
+        RestoreStamina();
 
     }
     void RestoreStamina()
@@ -142,12 +149,12 @@ public class PlayerMovement : MonoBehaviour
                     isSprint = true;
                     ModifyStamina(-10);
 
-                    speed = 8;
+                    speed = initialSpeed * 2;
                     m_Animator.SetBool(Constant.ANIM_SPRINT, true);
                 }
                 else
                 {
-                    speed = 4;
+                    speed = initialSpeed;
                     m_Animator.SetBool(Constant.ANIM_SPRINT, false);
                 }
             }
@@ -157,7 +164,7 @@ public class PlayerMovement : MonoBehaviour
         {
             isSprint = false;
 
-            speed = 4;
+            speed = initialSpeed;
             m_Animator.SetBool(Constant.ANIM_SPRINT, false);
         }
     }
@@ -188,6 +195,30 @@ public class PlayerMovement : MonoBehaviour
             m_Animator.SetBool(Constant.ANIM_ATTACK, false);
         }
 
+    }
+    public void Defend()
+    {
+        if (!isSprint)
+        {
+            if (Input.GetMouseButton(1))
+            {
+                isActiveShield = true;
+                m_Animator.SetBool(Constant.ANIM_DEF, true);
+                speed /= initialSpeed;
+
+                shieldCol.enabled = true;
+                playerCol.enabled = false;
+            }
+            else
+            {
+                isActiveShield = false;
+                m_Animator.SetBool(Constant.ANIM_DEF, false);
+                speed = initialSpeed;
+
+                shieldCol.enabled = false;
+                playerCol.enabled = true;
+            }
+        }
     }
     public void useAbilities(int abilities)
     {
@@ -317,7 +348,14 @@ public class PlayerMovement : MonoBehaviour
     }
     public void takeDamage(float damage)
     {
-        currentHealth -= damage;
+        if (isActiveShield)
+        {
+            currentHealth -= damage / 3;
+        }
+        else
+        {
+            currentHealth -= damage;
+        }
         healthBar.value = currentHealth;
         if (currentHealth <= 0)
         {

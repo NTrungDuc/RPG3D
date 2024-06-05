@@ -5,6 +5,7 @@ using UnityEngine;
 public class Constant : MonoBehaviour
 {
     public const string ANIM_RUN = "run";
+    public const string ANIM_DEF = "def";
     public const string ANIM_SPRINT = "sprint";
     public const string ANIM_JUMP = "jump";
     public const string ANIM_ATTACK = "attack";
@@ -12,7 +13,10 @@ public class Constant : MonoBehaviour
     public const string ANIM_DIE = "die";
     public const string TAG_ENEMY = "Enemy";
     public const string TAG_PLAYER = "Player";
+    public const string TAG_SHIELD = "Shield";
     public const string OPEN_CHEST = "isOpen";
+    //eagle anim
+    public const string ANIM_DIZZY = "dizzy";
     //boss anim
     public const string ANIM_JUMP_ATTACK = "jump_attack";
     public const string ANIM_ABILITIES_1 = "abilities_1";

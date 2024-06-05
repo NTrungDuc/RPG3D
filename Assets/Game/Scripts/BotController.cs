@@ -13,9 +13,11 @@ public class BotController : MonoBehaviour
     [SerializeField] private float currentHealth;
     [SerializeField] private int experienceValue = 30;
     [SerializeField] private LevelUp playerExp;
+    float initialSpeed;
     //col weapons
     [SerializeField] private Collider axeCol;
     [SerializeField] private Collider kickCol;
+    [SerializeField] private Collider bodyCol;
     //patrol
     private NavMeshAgent agent;
     [SerializeField] private float range;
@@ -28,6 +30,13 @@ public class BotController : MonoBehaviour
     private Animator animator;
     private IState currentState;
     public IState CurrentState { get => currentState; set => currentState = value; }
+
+    private static BotController instance;
+    public static BotController Instance { get { return instance; } }
+    private void Awake()
+    {
+        instance = this;
+    }
     // Start is called before the first frame update
     void Start()
     {
@@ -48,6 +57,7 @@ public class BotController : MonoBehaviour
     public void OnInit()
     {
         currentHealth = enemyMaxHealth;
+        initialSpeed = agent.speed;
         ChangeState(new IdleState());
     }
     public void checkDestination()
@@ -102,7 +112,8 @@ public class BotController : MonoBehaviour
     }
     public void Attack()
     {
-        if (enemyType == EnemyType.Normal)
+        transform.LookAt(Target);
+        if (enemyType == EnemyType.Normal || enemyType == EnemyType.Eagle)
         {
             axeCol.enabled = true;
             ChangeAnim(Constant.ANIM_ATTACK, true);
@@ -137,7 +148,7 @@ public class BotController : MonoBehaviour
     }
     public void ExitAttack()
     {
-        if (enemyType == EnemyType.Normal)
+        if (enemyType == EnemyType.Normal || enemyType == EnemyType.Eagle)
         {
             ChangeAnim(Constant.ANIM_ATTACK, false);
         }
@@ -152,8 +163,9 @@ public class BotController : MonoBehaviour
     }
     public void BossJumpAttack()
     {
-        if (enemyType == EnemyType.Boss && isJumpAttack)
+        if (isJumpAttack)
         {
+            agent.speed = initialSpeed * 2;
             ChangeAnim(Constant.ANIM_JUMP_ATTACK, true);
             StartCoroutine(WaitForAnimationJumpAttackToEnd());
         }
@@ -162,6 +174,17 @@ public class BotController : MonoBehaviour
     {
         yield return new WaitForSeconds(3f);
         isJumpAttack = false;
+        agent.speed = initialSpeed;
+    }
+
+    public IEnumerator Stun(float timeStun)
+    {
+        bodyCol.enabled = true;
+        ChangeAnim(Constant.ANIM_DIZZY, true);
+
+        yield return new WaitForSeconds(timeStun);
+        bodyCol.enabled = false;
+        ChangeAnim(Constant.ANIM_DIZZY, false);
     }
     public void stopMoving()
     {
@@ -198,5 +221,6 @@ public class BotController : MonoBehaviour
 public enum EnemyType
 {
     Normal,
+    Eagle,
     Boss
 }
