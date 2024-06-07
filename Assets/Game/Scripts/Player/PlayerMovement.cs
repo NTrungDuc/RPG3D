@@ -23,7 +23,7 @@ public class PlayerMovement : MonoBehaviour
     bool isSprint = false;
     bool isActiveShield = false;
     //collider
-    [SerializeField] private Collider playerCol;
+    //[SerializeField] private Collider playerCol;
     [SerializeField] private Collider shieldCol;
     //camera,movement
     [SerializeField] private CinemachineFreeLook cinemachineFreeLook;
@@ -207,7 +207,7 @@ public class PlayerMovement : MonoBehaviour
                 speed /= initialSpeed;
 
                 shieldCol.enabled = true;
-                playerCol.enabled = false;
+                //playerCol.enabled = false;
             }
             else
             {
@@ -216,7 +216,7 @@ public class PlayerMovement : MonoBehaviour
                 speed = initialSpeed;
 
                 shieldCol.enabled = false;
-                playerCol.enabled = true;
+                //playerCol.enabled = true;
             }
         }
     }

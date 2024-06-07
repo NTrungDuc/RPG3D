@@ -47,7 +47,7 @@ public class UseItem : MonoBehaviour
         }
         if (type == Type.EnemyAxe || type == Type.EnemyKick)
         {
-            if (other.CompareTag(Constant.TAG_PLAYER) || other.CompareTag(Constant.TAG_SHIELD))
+            if (other.CompareTag(Constant.TAG_PLAYER))
             {
                 //Debug.Log("take damage");
                 gameObject.GetComponent<BoxCollider>().enabled = false;
