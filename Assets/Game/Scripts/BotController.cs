@@ -172,7 +172,9 @@ public class BotController : MonoBehaviour
     }
     private IEnumerator WaitForAnimationJumpAttackToEnd()
     {
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1.5f);
+        CameraShake.Instance.ShakeCamera(5f, 1f);
+        yield return new WaitForSeconds(1.5f);
         isJumpAttack = false;
         agent.speed = initialSpeed;
     }

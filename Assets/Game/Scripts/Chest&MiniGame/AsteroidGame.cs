@@ -89,6 +89,7 @@ public class AsteroidGame : MonoBehaviour
     }
     void ResetValue()
     {
-        updateDestroyed();
+        countDestroyed = 0;
+        txtDestroyed.text = "Destroyed: " + countDestroyed.ToString();
     }
 }

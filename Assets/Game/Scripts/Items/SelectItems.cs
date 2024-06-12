@@ -6,23 +6,28 @@ using UnityEngine.UI;
 public class SelectItems : MonoBehaviour
 {
     public Items Item;
+    private bool isKeyPressed = false;
     public void PickUpItem()
     {
         if (Input.GetKey(KeyCode.F))
         {
-            bool result = InventoryManager.Instance.AddItem(Item);
-            if (result)
-            {
-                Debug.Log("Item Added");
-            }
-            else
-            {
-                Debug.Log("Item not Added");
-            }
-            GameObject parentObject = transform.parent.gameObject;
-            
-            Destroy(parentObject);
             InventoryManager.Instance.txtPickUps.gameObject.SetActive(false);
+            if (!isKeyPressed)
+            {
+                isKeyPressed = true;
+                bool result = InventoryManager.Instance.AddItem(Item);
+                if (result)
+                {
+                    Debug.Log("Item Added");
+                }
+                else
+                {
+                    Debug.Log("Item not Added");
+                }
+                GameObject parentObject = transform.parent.gameObject;
+
+                Destroy(parentObject);
+            }
         }
     }
     private void OnTriggerStay(Collider other)

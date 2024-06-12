@@ -1,4 +1,4 @@
-using Cinemachine;
+﻿using Cinemachine;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -23,10 +23,8 @@ public class PlayerMovement : MonoBehaviour
     bool isSprint = false;
     bool isActiveShield = false;
     //collider
-    //[SerializeField] private Collider playerCol;
     [SerializeField] private Collider shieldCol;
     //camera,movement
-    [SerializeField] private CinemachineFreeLook cinemachineFreeLook;
     [SerializeField] private Camera m_Camera;
     [SerializeField] CharacterController characterController;
     [SerializeField] private Animator m_Animator;
@@ -100,8 +98,17 @@ public class PlayerMovement : MonoBehaviour
         {
             mDesiredRotation = Mathf.Atan2(rotateMovement.x, rotateMovement.z) * Mathf.Rad2Deg;
             m_Animator.SetBool(Constant.ANIM_RUN, true);
+
             state = PlayerState.Moving;
             PlayerSprint();
+            if (!isSprint)
+            {
+                SoundManager.Instance.soundWalk(true);
+            }
+            else
+            {
+                SoundManager.Instance.soundWalk(false);
+            }
         }
         else
         {
@@ -109,6 +116,7 @@ public class PlayerMovement : MonoBehaviour
 
             state = PlayerState.Idle;
             m_Animator.SetBool(Constant.ANIM_SPRINT, false);
+            SoundManager.Instance.soundWalk(false);
         }
 
 
@@ -151,11 +159,13 @@ public class PlayerMovement : MonoBehaviour
 
                     speed = initialSpeed * 2;
                     m_Animator.SetBool(Constant.ANIM_SPRINT, true);
+                    SoundManager.Instance.soundRun(true);
                 }
                 else
                 {
                     speed = initialSpeed;
                     m_Animator.SetBool(Constant.ANIM_SPRINT, false);
+                    SoundManager.Instance.soundRun(false);
                 }
             }
 
@@ -166,6 +176,7 @@ public class PlayerMovement : MonoBehaviour
 
             speed = initialSpeed;
             m_Animator.SetBool(Constant.ANIM_SPRINT, false);
+            SoundManager.Instance.soundRun(false);
         }
     }
 
@@ -181,18 +192,21 @@ public class PlayerMovement : MonoBehaviour
 
                 state = PlayerState.Attack;
                 m_Animator.SetBool(Constant.ANIM_ATTACK, true);
+                SoundManager.Instance.soundSword(true);
                 //target enemy
                 TargetEnemy(nearestEnemy);
             }
             else
             {
                 m_Animator.SetBool(Constant.ANIM_ATTACK, false);
+                SoundManager.Instance.soundSword(false);
             }
         }
         else
         {
             isAttack = false;
             m_Animator.SetBool(Constant.ANIM_ATTACK, false);
+            SoundManager.Instance.soundSword(false);
         }
 
     }
@@ -227,9 +241,10 @@ public class PlayerMovement : MonoBehaviour
         {
             //use skill
             state = PlayerState.Attack;
-            UltimateSkill.fillAmount = 1;
+
             if (!isUseSkill)
             {
+                UltimateSkill.fillAmount = 1;
                 switch (abilities)
                 {
                     case 0:
@@ -338,7 +353,7 @@ public class PlayerMovement : MonoBehaviour
     public void LockCursor(bool activeCursor, CursorLockMode mode)
     {
         Cursor.visible = activeCursor;
-        cinemachineFreeLook.enabled = !activeCursor;
+        CameraShake.Instance.freeLookCamera.enabled = !activeCursor;
         Cursor.lockState = mode;
     }
     public void UpgradeStats(float healthLevelMultiplier, float staminaLevelMultiplier, int level)
