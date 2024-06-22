@@ -66,7 +66,7 @@ public class PlayerMovement : MonoBehaviour
     }
     private void Movement()
     {
-        if (state == PlayerState.Attack)
+        if (state == PlayerState.Attack || isOpenInventory)
         {
             return;
         }
@@ -303,13 +303,11 @@ public class PlayerMovement : MonoBehaviour
         {
             if (!isOpenInventory)
             {
-                isOpenInventory = true;
                 PanelInventory.SetActive(true);
                 LockCursor(true, CursorLockMode.None);
             }
             else
             {
-                isOpenInventory = false;
                 PanelInventory.SetActive(false);
                 LockCursor(false, CursorLockMode.Locked);
             }
@@ -320,6 +318,7 @@ public class PlayerMovement : MonoBehaviour
         Cursor.visible = activeCursor;
         CameraShake.Instance.freeLookCamera.enabled = !activeCursor;
         Cursor.lockState = mode;
+        isOpenInventory = activeCursor;
     }
     public void UpgradeStats(float healthLevelMultiplier, float staminaLevelMultiplier, int level)
     {
