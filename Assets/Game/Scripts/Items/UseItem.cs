@@ -4,10 +4,11 @@ using UnityEngine;
 
 public class UseItem : MonoBehaviour
 {
-    public enum Type { PlayerSword, EnemyAxe, PosionRed, PlayerSkill, Staves_0, Staves_1, Staves_2, EnemyKick, EnemyBoomb, EagleAttack };
+    public enum Type { PlayerSword, EnemyAxe, PosionRed, PlayerSkill, Staves, EnemyKick, EnemyBoomb, EagleAttack, TotoiseAttack };
     public Type type;
-    [SerializeField] private float value;
+    [SerializeField] public float value;
     private bool hasAttacked = false;
+    public bool hasSkill = false;
     public void Use()
     {
         if (type == Type.PosionRed)
@@ -21,17 +22,9 @@ public class UseItem : MonoBehaviour
         {
             PlayerMovement.Instance.Attack();
         }
-        if (type == Type.Staves_0)
+        if (type == Type.Staves)
         {
-            PlayerMovement.Instance.useAbilities(0);
-        }
-        if (type == Type.Staves_1)
-        {
-            PlayerMovement.Instance.useAbilities(1);
-        }
-        if (type == Type.Staves_2)
-        {
-            PlayerMovement.Instance.useAbilities(2);
+            PlayerMovement.Instance.useAbilities(Mathf.CeilToInt(value));
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -44,12 +37,17 @@ public class UseItem : MonoBehaviour
                 other.GetComponent<BotController>().takeDamage(value);
                 hasAttacked = true;
             }
+            if (other.CompareTag(Constant.TAG_BOX) && !hasAttacked && PlayerMovement.Instance.state == PlayerState.Attack)
+            {
+                //Debug.Log("Player damaged");
+                other.GetComponent<DestroyBox>().takeDamage(value);
+                hasAttacked = true;
+            }
         }
         if (type == Type.EnemyAxe || type == Type.EnemyKick)
         {
             if (other.CompareTag(Constant.TAG_PLAYER))
             {
-                //Debug.Log("take damage");
                 gameObject.GetComponent<BoxCollider>().enabled = false;
                 other.GetComponent<PlayerMovement>().takeDamage(value);
             }
@@ -58,7 +56,6 @@ public class UseItem : MonoBehaviour
         {
             if (other.CompareTag(Constant.TAG_PLAYER))
             {
-                //Debug.Log("take damage");
                 gameObject.GetComponent<BoxCollider>().enabled = false;
                 other.GetComponent<PlayerMovement>().takeDamage(value);
             }
@@ -82,6 +79,16 @@ public class UseItem : MonoBehaviour
             {
                 Debug.Log("skill vfx");
                 other.GetComponent<BotController>().takeDamage(value);
+            }
+        }
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if(type == Type.TotoiseAttack)
+        {
+            if (other.CompareTag(Constant.TAG_PLAYER))
+            {
+                other.GetComponent<PlayerMovement>().takeDamage(value * Time.deltaTime);
             }
         }
     }

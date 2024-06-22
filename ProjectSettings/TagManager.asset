@@ -7,11 +7,12 @@ TagManager:
   - weapon
   - Enemy
   - Shield
+  - Box
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Enemy
   - Water
   - UI
   - 

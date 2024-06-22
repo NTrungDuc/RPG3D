@@ -34,14 +34,7 @@ public class PlayerMovement : MonoBehaviour
     private float RotationSpeed = 15;
 
     float mDesiredRotation = 0f;
-    //skill
-    [SerializeField] private ParticleSystem ultimateEffect_0;
-    [SerializeField] private ParticleSystem ultimateEffect_1;
-    [SerializeField] private ParticleSystem ultimateEffect_2;
-    [SerializeField] private Transform posUltimate;
-    [SerializeField] private Image UltimateSkill;
-    float timeCDSkill = 10f;
-    bool isUseSkill = false;
+
     //jump,gravity
     float mSpeedY = 0;
     float mGravity = -9.81f;
@@ -50,8 +43,8 @@ public class PlayerMovement : MonoBehaviour
     //Panel
     [SerializeField] private GameObject PanelInventory;
     public bool isOpenInventory = false;
-
-
+    //target obj
+    [SerializeField] private LayerMask enemyLayer;
     private void Awake()
     {
         instance = this;
@@ -68,11 +61,15 @@ public class PlayerMovement : MonoBehaviour
 
             Movement();
             Inventory();
-            CDSkill();
+            WeaponsCDManager.Instance.CDWeapons();
         }
     }
     private void Movement()
     {
+        if (state == PlayerState.Attack)
+        {
+            return;
+        }
         float h = Input.GetAxisRaw("Horizontal");
         float v = Input.GetAxisRaw("Vertical");
         Vector3 movement = new Vector3(h, 0, v).normalized;
@@ -100,6 +97,11 @@ public class PlayerMovement : MonoBehaviour
             m_Animator.SetBool(Constant.ANIM_RUN, true);
 
             state = PlayerState.Moving;
+            //rotation
+            Quaternion currentRotation = transform.rotation;
+            Quaternion targetRotation = Quaternion.Euler(0, mDesiredRotation, 0);
+            transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, RotationSpeed * Time.deltaTime);
+            //run
             PlayerSprint();
             if (!isSprint)
             {
@@ -120,9 +122,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        Quaternion currentRotation = transform.rotation;
-        Quaternion targetRotation = Quaternion.Euler(0, mDesiredRotation, 0);
-        transform.rotation = Quaternion.Lerp(currentRotation, targetRotation, RotationSpeed * Time.deltaTime);
+        
 
         //restore stamina
         RestoreStamina();
@@ -182,7 +182,6 @@ public class PlayerMovement : MonoBehaviour
 
     public void Attack()
     {
-        GameObject nearestEnemy = FindNearestEnemy();
         if (Input.GetMouseButton(0))
         {
             if (staminaValue > 0)
@@ -194,7 +193,11 @@ public class PlayerMovement : MonoBehaviour
                 m_Animator.SetBool(Constant.ANIM_ATTACK, true);
                 SoundManager.Instance.soundSword(true);
                 //target enemy
-                TargetEnemy(nearestEnemy);
+                GameObject nearestEnemy = FindNearestEnemy();
+                if (nearestEnemy != null)
+                {
+                    TargetEnemy(nearestEnemy);
+                }
             }
             else
             {
@@ -205,6 +208,7 @@ public class PlayerMovement : MonoBehaviour
         else
         {
             isAttack = false;
+            state = PlayerState.Idle;
             m_Animator.SetBool(Constant.ANIM_ATTACK, false);
             SoundManager.Instance.soundSword(false);
         }
@@ -236,52 +240,13 @@ public class PlayerMovement : MonoBehaviour
     }
     public void useAbilities(int abilities)
     {
-
         if (Input.GetKeyUp(KeyCode.E))
         {
-            //use skill
-            state = PlayerState.Attack;
-
-            if (!isUseSkill)
-            {
-                UltimateSkill.fillAmount = 1;
-                switch (abilities)
-                {
-                    case 0:
-                        StartCoroutine(EffectSKill(ultimateEffect_0, 4f, timeCDSkill));
-                        break;
-                    case 1:
-                        StartCoroutine(EffectSKill(ultimateEffect_1, 4f, timeCDSkill));
-                        break;
-                    case 2:
-                        StartCoroutine(EffectSKill(ultimateEffect_2, 4f, timeCDSkill));
-                        break;
-                }
-            }
+            WeaponsCDManager.Instance.UseWeapon(abilities);           
         }
 
     }
-    void CDSkill()
-    {
-        if (isUseSkill)
-        {
-            UltimateSkill.fillAmount -= 1 / (timeCDSkill + 4) * Time.deltaTime;
-            if (UltimateSkill.fillAmount <= 0)
-            {
-                UltimateSkill.fillAmount = 0;
-            }
-        }
-    }
-    IEnumerator EffectSKill(ParticleSystem skill, float time, float timeCD)
-    {
-        isUseSkill = true;
-        skill.transform.position = posUltimate.position;
-        skill.gameObject.SetActive(true);
-        yield return new WaitForSeconds(time);
-        skill.gameObject.SetActive(false);
-        yield return new WaitForSeconds(timeCD);
-        isUseSkill = false;
-    }
+
     void TargetEnemy(GameObject target)
     {
         if (target != null)
@@ -296,16 +261,16 @@ public class PlayerMovement : MonoBehaviour
     }
     GameObject FindNearestEnemy()
     {
-        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
+        Collider[] hitColliders = Physics.OverlapSphere(transform.position, attackRange, enemyLayer);
         GameObject nearestEnemy = null;
         float nearestDistance = Mathf.Infinity;
 
-        foreach (GameObject enemy in enemies)
+        foreach (Collider hitCollider in hitColliders)
         {
-            float distance = Vector3.Distance(transform.position, enemy.transform.position);
+            float distance = Vector3.Distance(transform.position, hitCollider.transform.position);
             if (distance < nearestDistance && distance <= attackRange)
             {
-                nearestEnemy = enemy;
+                nearestEnemy = hitCollider.gameObject;
                 nearestDistance = distance;
             }
         }

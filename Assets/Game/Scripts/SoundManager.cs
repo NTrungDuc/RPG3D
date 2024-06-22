@@ -9,6 +9,10 @@ public class SoundManager : MonoBehaviour
     [SerializeField] private AudioSource footStepsWalk;
     [SerializeField] private AudioSource footStepsRun;
     [SerializeField] private AudioSource swordSlash;
+    //sound boss totoise
+    [SerializeField] public AudioSource attackTotoise_1;
+    [SerializeField] public AudioSource attackTotoise_2;
+    [SerializeField] public AudioSource attackTotoise_3;
     private void Awake()
     {
         instance = this;
@@ -24,5 +28,10 @@ public class SoundManager : MonoBehaviour
     public void soundSword(bool isAttack)
     {
         swordSlash.enabled = isAttack;
+    }
+    public IEnumerator TotoiseAttackAcis()
+    {
+        yield return new WaitForSeconds(3f);
+        attackTotoise_2.Play();
     }
 }

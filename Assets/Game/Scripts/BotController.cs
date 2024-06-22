@@ -15,8 +15,8 @@ public class BotController : MonoBehaviour
     [SerializeField] private LevelUp playerExp;
     float initialSpeed;
     //col weapons
-    [SerializeField] private Collider axeCol;
-    [SerializeField] private Collider kickCol;
+    [SerializeField] private Collider attack_1;
+    [SerializeField] private Collider attack_2;
     [SerializeField] private Collider bodyCol;
     //patrol
     private NavMeshAgent agent;
@@ -110,41 +110,79 @@ public class BotController : MonoBehaviour
         }
         return false;
     }
-    public void Attack()
+    public void CloseRangeAttack()
     {
         transform.LookAt(Target);
-        if (enemyType == EnemyType.Normal || enemyType == EnemyType.Eagle)
+        if (enemyType == EnemyType.Normal || enemyType == EnemyType.Eagle || enemyType == EnemyType.Enemy_Boom)
         {
-            axeCol.enabled = true;
+            attack_1.enabled = true;
             ChangeAnim(Constant.ANIM_ATTACK, true);
         }
-        if (enemyType == EnemyType.Boss)
+        if (enemyType == EnemyType.Boss_minotaur)
         {
             int attackType = Random.Range(0, 4);
-            BossAttack(attackType);
+            BossMinotaurAttack(attackType);
+        }
+        if (enemyType == EnemyType.Boss_Tortoise)
+        {
+            int attackType = Random.Range(0, 2);
+            BossTotoiseAttack(attackType);
         }
     }
-    public void BossAttack(int abilities)
+    public void MediumRangeAttack()
+    {
+        transform.LookAt(Target);
+        if (enemyType == EnemyType.Boss_Tortoise)
+        {
+            BossTotoiseAttack(2);
+        }
+    }
+    public void BossMinotaurAttack(int abilities)
     {
         switch (abilities)
         {
             case 0:
-                axeCol.enabled = true;
+                attack_1.enabled = true;
                 ChangeAnim(Constant.ANIM_ABILITIES_1, true);
                 break;
             case 1:
-                axeCol.enabled = true;
+                attack_1.enabled = true;
                 ChangeAnim(Constant.ANIM_ABILITIES_2, true);
                 break;
             case 2:
-                axeCol.enabled = true;
+                attack_1.enabled = true;
                 ChangeAnim(Constant.ANIM_ABILITIES_3, true);
                 break;
             case 3:
-                kickCol.enabled = true;
+                attack_2.enabled = true;
                 ChangeAnim(Constant.ANIM_ABILITIES_4, true);
                 break;
         }
+    }
+    public void BossTotoiseAttack(int abilities)
+    {
+        switch (abilities)
+        {
+            case 0:
+                StartCoroutine(WaitTotoiseAttack_1());
+                SoundManager.Instance.attackTotoise_1.Play();
+                ChangeAnim(Constant.ANIM_ABILITIES_1, true);
+                break;
+            case 1:
+                SoundManager.Instance.attackTotoise_3.Play();
+                ChangeAnim(Constant.ANIM_ABILITIES_2, true);
+                break;
+            case 2:
+                StartCoroutine(SoundManager.Instance.TotoiseAttackAcis());
+                ChangeAnim(Constant.ANIM_ABILITIES_3, true);
+                break;
+        }
+    }
+    public IEnumerator WaitTotoiseAttack_1()
+    {
+        attack_1.enabled = true;
+        yield return new WaitForSeconds(3f);
+        attack_1.enabled = false;
     }
     public void ExitAttack()
     {
@@ -152,13 +190,19 @@ public class BotController : MonoBehaviour
         {
             ChangeAnim(Constant.ANIM_ATTACK, false);
         }
-        if (enemyType == EnemyType.Boss)
+        if (enemyType == EnemyType.Boss_minotaur)
         {
             ChangeAnim(Constant.ANIM_ABILITIES_1, false);
             ChangeAnim(Constant.ANIM_ABILITIES_2, false);
             ChangeAnim(Constant.ANIM_ABILITIES_3, false);
             ChangeAnim(Constant.ANIM_ABILITIES_4, false);
             ChangeAnim(Constant.ANIM_JUMP_ATTACK, false);
+        }
+        if (enemyType == EnemyType.Boss_Tortoise)
+        {
+            ChangeAnim(Constant.ANIM_ABILITIES_1, false);
+            ChangeAnim(Constant.ANIM_ABILITIES_2, false);
+            ChangeAnim(Constant.ANIM_ABILITIES_3, false);
         }
     }
     public void BossJumpAttack()
@@ -224,5 +268,7 @@ public enum EnemyType
 {
     Normal,
     Eagle,
-    Boss
+    Boss_minotaur,
+    Boss_Tortoise,
+    Enemy_Boom
 }

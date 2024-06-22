@@ -87,7 +87,19 @@ public class InventoryManager : MonoBehaviour
         InventoryItem itemInSlot = slot.GetComponentInChildren<InventoryItem>();
         if (itemInSlot != null && !PlayerMovement.Instance.isOpenInventory)
         {
-            ItemInHand[itemInSlot.item.id - 1].GetComponent<UseItem>().Use();
+            UseItem useItem = ItemInHand[itemInSlot.item.id - 1].GetComponent<UseItem>();
+            useItem.Use();
+            if(useItem.hasSkill)
+            {
+                WeaponsCDManager.Instance.UpdateUICooldown(Vector3.one, Mathf.CeilToInt(useItem.value), true);
+            }
+            else
+            {
+                WeaponsCDManager.Instance.UpdateUICooldown(Vector3.zero, -1, false);
+            }
+        }else if(itemInSlot == null)
+        {
+            WeaponsCDManager.Instance.UpdateUICooldown(Vector3.zero, -1, false);
         }
     }
     public void refreshCountItem()

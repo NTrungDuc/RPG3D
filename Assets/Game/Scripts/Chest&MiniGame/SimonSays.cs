@@ -12,7 +12,7 @@ public class SimonSays : MonoBehaviour
     [SerializeField] private List<Color> result;
     private Color previousColor;
     float flashDelay = 1f;
-    int randomCount = 6;
+    [SerializeField] private int randomCount = 6;
     [SerializeField] private Image BlurImage;
 
     private void OnEnable()
@@ -29,11 +29,16 @@ public class SimonSays : MonoBehaviour
     {
         for (int i = 0; i < randomCount; i++)
         {
-            yield return new WaitForSeconds(flashDelay);
             Color randomColor = GetRandomColor();
             PreviewImage.color = randomColor;
-            previousColor = randomColor;
+            yield return new WaitForSeconds(flashDelay);
+
             result.Add(randomColor);
+
+            PreviewImage.color = Color.white;
+            yield return new WaitForSeconds(flashDelay);
+
+            previousColor = randomColor;
         }
         
         BlurImage.gameObject.SetActive(false);
@@ -41,10 +46,6 @@ public class SimonSays : MonoBehaviour
     Color GetRandomColor()
     {
         Color randomColor = sequence[Random.Range(0, sequence.Count)];
-        while (randomColor == previousColor)
-        {
-            randomColor = sequence[Random.Range(0, sequence.Count)];
-        }
         return randomColor;
     }
     public void OnButtonClick(Image button)
@@ -75,6 +76,7 @@ public class SimonSays : MonoBehaviour
         {
             Debug.Log("Wrong sequence!");
             ResetValue();
+            StartCoroutine(PlaySequence());
         }
     }
     void ResetValue()

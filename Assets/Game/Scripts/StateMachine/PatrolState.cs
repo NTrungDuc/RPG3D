@@ -9,12 +9,18 @@ public class PatrolState : IState
     //range attack
     float attackRange = 2f;
     float attackRangeEagle = 5.2f;
+    float attackRangeTotoise = 7f;
+    float attackRangeAcitTotoise = 20f;
     float chaseRange = 10f;
     float jumpattackRange = 5f; //boss
     public void OnEnter(BotController bot)
     {
         bot.SetRandomTargetFollow();
         duration = Random.Range(1f, 4f);
+        if (bot.enemyType == EnemyType.Boss_Tortoise)
+        {
+            chaseRange = 25f;
+        }
     }
     public void OnExecute(BotController bot)
     {
@@ -24,14 +30,14 @@ public class PatrolState : IState
         {
             bot.ChangeState(new IdleState());
         }
-        if (bot.enemyType == EnemyType.Normal || bot.enemyType == EnemyType.Boss)
+        if (bot.enemyType == EnemyType.Normal || bot.enemyType == EnemyType.Boss_minotaur || bot.enemyType == EnemyType.Enemy_Boom)
         {
             if (bot.IsHaveTargetInRange(attackRange) && timer > 1f)
             {
-                bot.ChangeState(new AttackState());
+                bot.ChangeState(new AttackState("CloseRange"));
             }
         }
-        if (bot.enemyType == EnemyType.Boss)
+        if (bot.enemyType == EnemyType.Boss_minotaur)
         {
             if (bot.IsHaveTargetInRange(jumpattackRange))
             {
@@ -42,7 +48,18 @@ public class PatrolState : IState
         {
             if (bot.IsHaveTargetInRange(attackRangeEagle) && timer > 1f)
             {
-                bot.ChangeState(new AttackState());
+                bot.ChangeState(new AttackState("CloseRange"));
+            }
+        }
+        if (bot.enemyType == EnemyType.Boss_Tortoise)
+        {
+            if (bot.IsHaveTargetInRange(attackRangeTotoise) && timer > 3f)
+            {
+                bot.ChangeState(new AttackState("CloseRange"));
+            }
+            else if (bot.IsHaveTargetInRange(attackRangeAcitTotoise) && timer > 3f)
+            {
+                bot.ChangeState(new AttackState("MediumRange"));
             }
         }
     }

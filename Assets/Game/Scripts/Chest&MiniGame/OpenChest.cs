@@ -8,11 +8,18 @@ public class OpenChest : MonoBehaviour
     [SerializeField] private GameObject miniGame;
     [SerializeField] private Animator animator;
     [SerializeField] private Collider Collider;
+    public ChestType chestType;
+    [Header("Puzzel Password")]
+    [SerializeField] private string Password;
     IEnumerator Open()
     {
         if (Input.GetKey(KeyCode.F))
         {
-            miniGame.SetActive(true);                       
+            miniGame.SetActive(true);
+            if (chestType == ChestType.PuzzelPassword)
+            {
+                miniGame.GetComponent<PuzzelPassword>().correctPassword = Password;
+            }
         }
         if (InventoryManager.Instance.isWinMiniGame)
         {
@@ -49,4 +56,9 @@ public class OpenChest : MonoBehaviour
             InventoryManager.Instance.txtPickUps.gameObject.SetActive(false);
         }
     }
+}
+public enum ChestType
+{
+    MiniGame,
+    PuzzelPassword
 }

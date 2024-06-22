@@ -15,12 +15,15 @@ public class Constant : MonoBehaviour
     public const string TAG_PLAYER = "Player";
     public const string TAG_SHIELD = "Shield";
     public const string OPEN_CHEST = "isOpen";
-    //eagle anim
+    //eagle
     public const string ANIM_DIZZY = "dizzy";
-    //boss anim
+    //boss
     public const string ANIM_JUMP_ATTACK = "jump_attack";
     public const string ANIM_ABILITIES_1 = "abilities_1";
     public const string ANIM_ABILITIES_2 = "abilities_2";
     public const string ANIM_ABILITIES_3 = "abilities_3";
     public const string ANIM_ABILITIES_4 = "abilities_4";
+    //box
+    public const string TAG_BOX = "Box";
+    public const string ANIM_BOX_CRASH = "crash";
 }
