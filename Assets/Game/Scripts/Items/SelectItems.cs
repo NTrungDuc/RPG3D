@@ -11,7 +11,6 @@ public class SelectItems : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.F))
         {
-            InventoryManager.Instance.txtPickUps.gameObject.SetActive(false);
             if (!isKeyPressed)
             {
                 isKeyPressed = true;

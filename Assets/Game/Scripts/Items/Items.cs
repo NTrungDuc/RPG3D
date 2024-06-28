@@ -7,7 +7,7 @@ public class Items : ScriptableObject
     public string itemName;
     public bool stackable;
     public Type type;
-    //public float value;
+    public float price;
     public Sprite icon;
 }
 public enum Type
