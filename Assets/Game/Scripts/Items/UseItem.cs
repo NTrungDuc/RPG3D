@@ -1,12 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class UseItem : MonoBehaviour
 {
     public enum Type { PlayerSword, EnemyAxe, PosionRed, PlayerSkill, Staves, EnemyKick, EnemyBoomb, EagleAttack, TotoiseAttack };
     public Type type;
     [SerializeField] public float value;
+    [SerializeField] public Items item;
     private bool hasAttacked = false;
     public bool hasSkill = false;
     public void Use()
@@ -15,7 +17,10 @@ public class UseItem : MonoBehaviour
         {
             if (Input.GetMouseButtonUp(0))
             {
-                PlayerMovement.Instance.UsePosion(value);
+                if (RemoveItem(item))
+                {
+                    PlayerMovement.Instance.UsePosion(value);
+                }
             }
         }
         if (type == Type.PlayerSword)
@@ -70,10 +75,10 @@ public class UseItem : MonoBehaviour
             {
                 other.GetComponent<PlayerMovement>().takeDamage(value);
                 gameObject.GetComponent<CapsuleCollider>().enabled = false;
-                StartCoroutine(WaitAnimation(2f));                
+                StartCoroutine(WaitAnimation(2f));
             }
         }
-        if(type == Type.PlayerSkill)
+        if (type == Type.PlayerSkill)
         {
             if (other.CompareTag(Constant.TAG_ENEMY))
             {
@@ -84,7 +89,7 @@ public class UseItem : MonoBehaviour
     }
     private void OnTriggerStay(Collider other)
     {
-        if(type == Type.TotoiseAttack)
+        if (type == Type.TotoiseAttack)
         {
             if (other.CompareTag(Constant.TAG_PLAYER))
             {
@@ -100,5 +105,20 @@ public class UseItem : MonoBehaviour
     private void OnTriggerExit(Collider other)
     {
         hasAttacked = false;
+    }
+    //remove item from list data
+    public bool RemoveItem(Items item)
+    {
+        List<Items> listItem = GameManager.Instance.allItemsInventory;
+
+        for (int i = 0; i < listItem.Count; i++)
+        {
+            if (listItem[i].id == item.id)
+            {
+                listItem.RemoveAt(i);
+                return true;
+            }
+        }
+        return false;
     }
 }

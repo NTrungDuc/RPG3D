@@ -2387,6 +2387,7 @@ MonoBehaviour:
   enemyMaxHealth: 1000
   currentHealth: 0
   experienceValue: 200
+  coinDropped: 30
   playerExp: {fileID: 362834218}
   attack_1: {fileID: 851181728}
   attack_2: {fileID: 0}
@@ -2477,7 +2478,7 @@ GameObject:
   - component: {fileID: 117385027}
   - component: {fileID: 117385026}
   m_Layer: 5
-  m_Name: BG
+  m_Name: BGCoin
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4134,6 +4135,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 7
   value: 20
+  item: {fileID: 0}
   hasSkill: 0
 --- !u!1 &197784729 stripped
 GameObject:
@@ -5018,6 +5020,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   value: 30
+  item: {fileID: 11400000, guid: 3a89e512e4ab82640b9d90a384ea6934, type: 2}
   hasSkill: 0
 --- !u!65 &257173785
 BoxCollider:
@@ -5866,6 +5869,7 @@ MonoBehaviour:
   enemyMaxHealth: 100
   currentHealth: 0
   experienceValue: 50
+  coinDropped: 30
   playerExp: {fileID: 362834218}
   attack_1: {fileID: 191715427}
   attack_2: {fileID: 0}
@@ -6069,6 +6073,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   state: 0
+  levelUp: {fileID: 362834218}
   healthBar: {fileID: 875653579}
   staminaBar: {fileID: 1349399111}
   shieldCol: {fileID: 595096740}
@@ -6148,6 +6153,8 @@ MonoBehaviour:
   xpMultiplier: 1.5
   textEXP: {fileID: 241234234}
   expBar: {fileID: 1679959776}
+  currentCoin: 100
+  coin: {fileID: 487386322}
 --- !u!114 &362834219
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -6575,6 +6582,7 @@ MonoBehaviour:
   enemyMaxHealth: 100
   currentHealth: 0
   experienceValue: 50
+  coinDropped: 30
   playerExp: {fileID: 362834218}
   attack_1: {fileID: 1520816240}
   attack_2: {fileID: 0}
@@ -7713,6 +7721,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 2
   value: 10
+  item: {fileID: 11400000, guid: 58f9b9a7f0dd9414987e75b72cdb0e6d, type: 2}
   hasSkill: 0
 --- !u!23 &474558870
 MeshRenderer:
@@ -8590,6 +8599,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   value: 5
+  item: {fileID: 0}
   hasSkill: 0
 --- !u!1001 &486518608
 PrefabInstance:
@@ -8683,8 +8693,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
-  m_AnchoredPosition: {x: -87.142456, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -83.61519, y: 0}
+  m_SizeDelta: {x: 141.8488, y: 100}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &487386322
 MonoBehaviour:
@@ -9467,7 +9477,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!4 &584466088
 Transform:
   m_ObjectHideFlags: 0
@@ -10788,6 +10798,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 0
   value: 10
+  item: {fileID: 11400000, guid: 7e4ab3e6f69224745b60904e019b78c6, type: 2}
   hasSkill: 0
 --- !u!1001 &753216397
 PrefabInstance:
@@ -12575,6 +12586,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 8
   value: 5
+  item: {fileID: 0}
   hasSkill: 0
 --- !u!1 &851634084
 GameObject:
@@ -15665,6 +15677,7 @@ MonoBehaviour:
   enemyMaxHealth: 1000
   currentHealth: 0
   experienceValue: 0
+  coinDropped: 30
   playerExp: {fileID: 362834218}
   attack_1: {fileID: 1077532152}
   attack_2: {fileID: 0}
@@ -15687,6 +15700,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 6
   value: 50
+  item: {fileID: 0}
   hasSkill: 0
 --- !u!54 &1077532150
 Rigidbody:
@@ -15993,6 +16007,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 4
   value: 2
+  item: {fileID: 11400000, guid: be105f28348fc42499c1b974ee873ef0, type: 2}
   hasSkill: 1
 --- !u!1001 &1099777169
 PrefabInstance:
@@ -16308,6 +16323,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 4
   value: 0
+  item: {fileID: 11400000, guid: 783bc81f5ab86754f8a8eb6d6aab236d, type: 2}
   hasSkill: 1
 --- !u!1001 &1110208722
 PrefabInstance:
@@ -16798,6 +16814,74 @@ Transform:
   m_Children: []
   m_Father: {fileID: 362834214}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1146247442
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1146247445}
+  - component: {fileID: 1146247444}
+  - component: {fileID: 1146247443}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1146247443
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146247442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 118d93388d3393744bc7d4a0886c36ff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  gameManager: {fileID: 1146247444}
+--- !u!114 &1146247444
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146247442}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f20497f6aa0b461489f44b5f11eedc51, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerData:
+    level: 0
+    Exp: 0
+    health: 0
+    stamina: 0
+    coin: 0
+    items: []
+    itemsDestroyed: []
+  allItemsInventory: []
+  idItemsDestroyed: []
+--- !u!4 &1146247445
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146247442}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1156101430
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -17112,6 +17196,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 4
   value: 1
+  item: {fileID: 11400000, guid: 9cd046f8aad9f9e4b9bac6edb87f503f, type: 2}
   hasSkill: 1
 --- !u!1001 &1177723692
 PrefabInstance:
@@ -17954,6 +18039,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   value: 10
+  item: {fileID: 0}
   hasSkill: 0
 --- !u!65 &1218198610
 BoxCollider:
@@ -24028,6 +24114,7 @@ MonoBehaviour:
   enemyMaxHealth: 100
   currentHealth: 0
   experienceValue: 50
+  coinDropped: 30
   playerExp: {fileID: 362834218}
   attack_1: {fileID: 1218198610}
   attack_2: {fileID: 0}
@@ -24530,6 +24617,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 5
   value: 40
+  item: {fileID: 0}
   hasSkill: 0
 --- !u!1 &1517002084
 GameObject:
@@ -24734,6 +24822,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   value: 15
+  item: {fileID: 0}
   hasSkill: 0
 --- !u!65 &1520816240
 BoxCollider:
@@ -31586,6 +31675,7 @@ MonoBehaviour:
   enemyMaxHealth: 1000
   currentHealth: 0
   experienceValue: 150
+  coinDropped: 30
   playerExp: {fileID: 362834218}
   attack_1: {fileID: 2078488523}
   attack_2: {fileID: 1514731249}
@@ -33482,6 +33572,7 @@ MonoBehaviour:
   enemyMaxHealth: 100
   currentHealth: 0
   experienceValue: 30
+  coinDropped: 30
   playerExp: {fileID: 362834218}
   attack_1: {fileID: 483590494}
   attack_2: {fileID: 0}
@@ -33559,6 +33650,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 1
   value: 60
+  item: {fileID: 0}
   hasSkill: 0
 --- !u!65 &2078488523
 BoxCollider:
@@ -34816,3 +34908,4 @@ SceneRoots:
   - {fileID: 1413341716}
   - {fileID: 634416049}
   - {fileID: 1387753921}
+  - {fileID: 1146247445}

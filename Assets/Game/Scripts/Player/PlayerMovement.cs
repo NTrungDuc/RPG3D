@@ -14,10 +14,11 @@ public class PlayerMovement : MonoBehaviour
     private float currentHealth;
     float attackRange = 5f;
     public PlayerState state;
-
+    [SerializeField] public LevelUp levelUp;
     public Slider healthBar;
     private float staminaValue = 90;
     public Slider staminaBar;
+    //bool
     bool isUseStamina = false;
     bool isAttack = false;
     bool isSprint = false;
@@ -122,7 +123,7 @@ public class PlayerMovement : MonoBehaviour
         }
 
 
-        
+
 
         //restore stamina
         RestoreStamina();
@@ -242,7 +243,7 @@ public class PlayerMovement : MonoBehaviour
     {
         if (Input.GetKeyUp(KeyCode.E))
         {
-            WeaponsCDManager.Instance.UseWeapon(abilities);           
+            WeaponsCDManager.Instance.UseWeapon(abilities);
         }
 
     }
@@ -285,17 +286,12 @@ public class PlayerMovement : MonoBehaviour
     }
     public void UsePosion(float value)
     {
-        if (currentHealth < maxHealth)
-        {
-            currentHealth += value;
-            currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-            healthBar.value = currentHealth;
-            InventoryManager.Instance.refreshCountItem();
-        }
-        else
-        {
-            Debug.Log("Full HP");
-        }
+
+        currentHealth += value;
+        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+        healthBar.value = currentHealth;
+        InventoryManager.Instance.refreshCountItem();
+
     }
     public void Inventory()
     {
@@ -324,6 +320,18 @@ public class PlayerMovement : MonoBehaviour
     {
         Mathf.RoundToInt(maxHealth * Mathf.Pow(healthLevelMultiplier, level));
         Mathf.RoundToInt(staminaValue * Mathf.Pow(staminaLevelMultiplier, level));
+    }
+    public void SaveDataPlayer(PlayerData data)
+    {
+        data.health = maxHealth;
+        data.stamina = staminaValue;
+        levelUp.SaveDataLevelUp(data);
+    }
+    public void LoadDataPlayer(PlayerData data)
+    {
+        maxHealth = data.health;
+        staminaValue = data.stamina;
+        levelUp.LoadDataLevelUp(data);
     }
     public void takeDamage(float damage)
     {

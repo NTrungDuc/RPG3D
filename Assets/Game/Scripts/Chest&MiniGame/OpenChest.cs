@@ -11,6 +11,17 @@ public class OpenChest : MonoBehaviour
     public ChestType chestType;
     [Header("Puzzel Password")]
     [SerializeField] private string Password;
+    private string uniqueID;
+    private IEnumerator Start()
+    {
+        yield return null;
+
+        uniqueID = Item.id + "_" + transform.position.ToString();
+        if (GameManager.Instance.idItemsDestroyed.Contains(uniqueID))
+        {
+            Destroy(gameObject);
+        }
+    }
     IEnumerator Open()
     {
         if (Input.GetKey(KeyCode.F))
@@ -37,6 +48,7 @@ public class OpenChest : MonoBehaviour
                 Collider.enabled = false;
             }
             yield return new WaitForSeconds(5f);
+            GameManager.Instance.idItemsDestroyed.Add(uniqueID);
             Destroy(gameObject);
         }
     }

@@ -12,6 +12,7 @@ public class BotController : MonoBehaviour
     [SerializeField] private float enemyMaxHealth = 100;
     [SerializeField] private float currentHealth;
     [SerializeField] private int experienceValue = 30;
+    [SerializeField] private float coinDropped = 30;
     [SerializeField] private LevelUp playerExp;
     float initialSpeed;
     //col weapons
@@ -261,7 +262,7 @@ public class BotController : MonoBehaviour
         ChangeAnim(Constant.ANIM_DIE, true);
         yield return new WaitForSeconds(3f);
         gameObject.SetActive(false);
-        playerExp.GainXP(experienceValue);
+        playerExp.GainXP(experienceValue, coinDropped);
     }
 }
 public enum EnemyType

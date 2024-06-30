@@ -12,10 +12,12 @@ public class LevelUp : MonoBehaviour
     //ui
     public Text textEXP;
     public Image expBar;
-    public void GainXP(int xp)
+    public float currentCoin = 100;
+    public Text coin;
+    public void GainXP(int xp, float index)
     {
         currentXP += xp;
-        
+        GetCoin(index);
         if (currentXP >= CalculateRequiredXP())
         {
             LevelUpPlayer();
@@ -39,5 +41,24 @@ public class LevelUp : MonoBehaviour
     {
         expBar.fillAmount = (float) currentXP / (float) CalculateRequiredXP();
         textEXP.text = currentXP.ToString() + "/" + CalculateRequiredXP();
+        coin.text = currentCoin.ToString();
+    }
+    void GetCoin(float coinDropped)
+    {
+        currentCoin = float.Parse(coin.text);
+        currentCoin += coinDropped;
+    }
+    public void SaveDataLevelUp(PlayerData data)
+    {
+        data.coin = float.Parse(coin.text); 
+        data.level = level;
+        data.Exp = currentXP;
+    }
+    public void LoadDataLevelUp(PlayerData data)
+    {
+        currentCoin = data.coin;
+        level = data.level;
+        currentXP = data.Exp;
+        UpdateUI();
     }
 }
