@@ -13,17 +13,20 @@ public class PlayerMovement : MonoBehaviour
     private float maxHealth = 100;
     private float currentHealth;
     float attackRange = 5f;
+    private Vector3 currentPos;
     public PlayerState state;
     [SerializeField] public LevelUp levelUp;
     public Slider healthBar;
-    private float staminaValue = 90;
+    private float maxStamina = 90;
+    private float staminaValue;
     public Slider staminaBar;
     //bool
     bool isUseStamina = false;
     bool isAttack = false;
     bool isSprint = false;
     bool isActiveShield = false;
-    //collider
+    //shield
+    [SerializeField] private ShieldUpgrade shield;
     [SerializeField] private Collider shieldCol;
     //camera,movement
     [SerializeField] private Camera m_Camera;
@@ -46,13 +49,18 @@ public class PlayerMovement : MonoBehaviour
     public bool isOpenInventory = false;
     //target obj
     [SerializeField] private LayerMask enemyLayer;
+    //combo attack
+    private int comboStep = 1;
+    private float lastAttackTime = 0f;
+    [SerializeField] private float comboDelay = 0.5f;
     private void Awake()
     {
         instance = this;
     }
     private void Start()
     {
-        currentHealth = maxHealth;
+        StartCoroutine(upgradeStats(0.1f));
+        currentPos = transform.position;
         initialSpeed = speed;
     }
     private void Update()
@@ -63,6 +71,10 @@ public class PlayerMovement : MonoBehaviour
             Movement();
             Inventory();
             WeaponsCDManager.Instance.CDWeapons();
+        }
+        else
+        {
+            StartCoroutine(RespawnPlayer());
         }
     }
     private void Movement()
@@ -141,9 +153,9 @@ public class PlayerMovement : MonoBehaviour
         }
         if (!isUseStamina)
         {
-            if (staminaValue < 90)
+            if (staminaValue < maxStamina)
             {
-                ModifyStamina(10);
+                ModifyStamina(2);
             }
         }
     }
@@ -184,14 +196,14 @@ public class PlayerMovement : MonoBehaviour
     public void Attack()
     {
         if (Input.GetMouseButton(0))
-        {
+        {            
             if (staminaValue > 0)
             {
                 isAttack = true;
                 ModifyStamina(-10);
 
                 state = PlayerState.Attack;
-                m_Animator.SetBool(Constant.ANIM_ATTACK, true);
+                comboAttack();
                 SoundManager.Instance.soundSword(true);
                 //target enemy
                 GameObject nearestEnemy = FindNearestEnemy();
@@ -202,7 +214,7 @@ public class PlayerMovement : MonoBehaviour
             }
             else
             {
-                m_Animator.SetBool(Constant.ANIM_ATTACK, false);
+                resetCombo();
                 SoundManager.Instance.soundSword(false);
             }
         }
@@ -210,10 +222,42 @@ public class PlayerMovement : MonoBehaviour
         {
             isAttack = false;
             state = PlayerState.Idle;
-            m_Animator.SetBool(Constant.ANIM_ATTACK, false);
+            resetCombo();
             SoundManager.Instance.soundSword(false);
         }
 
+    }
+    void comboAttack()
+    {
+        if(lastAttackTime > comboDelay)
+        {
+            lastAttackTime = 0;
+            comboStep++;
+        }
+        lastAttackTime += Time.deltaTime;
+        if (comboStep == 1)
+        {
+            m_Animator.SetBool(Constant.ANIM_ATTACK1, true);
+        }
+        else if (comboStep == 2)
+        {
+            m_Animator.SetBool(Constant.ANIM_ATTACK2, true);
+        }
+        else if (comboStep == 3)
+        {
+            m_Animator.SetBool(Constant.ANIM_ATTACK3, true);
+        }
+        else
+        {            
+            resetCombo();
+        }
+    }
+    void resetCombo()
+    {
+        comboStep = 1;
+        m_Animator.SetBool(Constant.ANIM_ATTACK1, false);
+        m_Animator.SetBool(Constant.ANIM_ATTACK2, false);
+        m_Animator.SetBool(Constant.ANIM_ATTACK3, false);
     }
     public void Defend()
     {
@@ -281,16 +325,26 @@ public class PlayerMovement : MonoBehaviour
     void ModifyStamina(float delta)
     {
         staminaValue += delta * Time.deltaTime;
-        staminaValue = Mathf.Clamp(staminaValue, 0, staminaValue);
+        staminaValue = Mathf.Clamp(staminaValue, 0, maxStamina);
         staminaBar.value = staminaValue;
     }
-    public void UsePosion(float value)
+    public void UsePosion(float value, int index)
     {
-
-        currentHealth += value;
-        currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
-        healthBar.value = currentHealth;
-        InventoryManager.Instance.refreshCountItem();
+        switch (index)
+        {
+            case 0:
+                currentHealth += value;
+                currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
+                healthBar.value = currentHealth;
+                InventoryManager.Instance.refreshCountItem();
+                break;
+            case 1:
+                staminaValue += value;
+                staminaValue = Mathf.Clamp(staminaValue, 0, maxStamina);
+                staminaBar.value = staminaValue;
+                InventoryManager.Instance.refreshCountItem();
+                break;
+        }
 
     }
     public void Inventory()
@@ -318,26 +372,44 @@ public class PlayerMovement : MonoBehaviour
     }
     public void UpgradeStats(float healthLevelMultiplier, float staminaLevelMultiplier, int level)
     {
-        Mathf.RoundToInt(maxHealth * Mathf.Pow(healthLevelMultiplier, level));
-        Mathf.RoundToInt(staminaValue * Mathf.Pow(staminaLevelMultiplier, level));
+        int newMaxHealth = Mathf.RoundToInt(maxHealth * Mathf.Pow(healthLevelMultiplier, level));
+        int newMaxStamina =  Mathf.RoundToInt(maxStamina * Mathf.Pow(staminaLevelMultiplier, level));
+        maxHealth = newMaxHealth;
+        maxStamina = newMaxStamina;
+        StartCoroutine(upgradeStats(0));
+        StartCoroutine(AnimLevelUp());
+    }
+    IEnumerator AnimLevelUp()
+    {
+        m_Animator.SetTrigger(Constant.ANIM_LEVELUP);
+        yield return new WaitForSeconds(2.3f);
+        m_Animator.SetTrigger(Constant.ANIM_IDLE);
+    }
+    IEnumerator upgradeStats(float time)
+    {
+        yield return new WaitForSeconds(time);
+        currentHealth = maxHealth;
+        healthBar.value = healthBar.maxValue = currentHealth;
+        staminaValue = maxStamina;
+        staminaBar.value = staminaBar.maxValue = staminaValue;
     }
     public void SaveDataPlayer(PlayerData data)
     {
         data.health = maxHealth;
-        data.stamina = staminaValue;
+        data.stamina = maxStamina;
         levelUp.SaveDataLevelUp(data);
     }
     public void LoadDataPlayer(PlayerData data)
     {
         maxHealth = data.health;
-        staminaValue = data.stamina;
+        maxStamina = data.stamina;
         levelUp.LoadDataLevelUp(data);
     }
     public void takeDamage(float damage)
     {
         if (isActiveShield)
         {
-            currentHealth -= damage / 3;
+            currentHealth -= damage / shield.shieldValue;
         }
         else
         {
@@ -347,6 +419,27 @@ public class PlayerMovement : MonoBehaviour
         if (currentHealth <= 0)
         {
             //die
+            state = PlayerState.Die;
+            
+        }
+    }
+    public IEnumerator RespawnPlayer()
+    {
+        m_Animator.SetTrigger(Constant.ANIM_DIE);
+        //Debug.Log("die");
+        yield return new WaitForSeconds(5f);
+        state = PlayerState.Idle;
+        m_Animator.SetTrigger(Constant.ANIM_IDLE);
+        currentHealth = maxHealth;
+        staminaValue = maxStamina;
+        transform.position = currentPos;
+        yield return new WaitForSeconds(0.5f);
+        m_Animator.ResetTrigger(Constant.ANIM_IDLE);
+    }
+    private void OnTriggerStay(Collider other)
+    {
+        if (other.CompareTag(Constant.TAG_RESPAWN))
+        {
             state = PlayerState.Die;
         }
     }

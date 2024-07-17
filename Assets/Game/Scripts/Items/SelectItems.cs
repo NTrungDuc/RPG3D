@@ -9,10 +9,13 @@ public class SelectItems : MonoBehaviour
     public Items Item;
     private bool isKeyPressed = false;
     private string uniqueID;
-    private IEnumerator Start()
+    private void Start()
     {
-        yield return null;
-
+        StartCoroutine(destroyItems());
+    }
+    IEnumerator destroyItems()
+    {
+        yield return new WaitForSeconds(0.1f);
         uniqueID = Item.id + "_" + transform.position.ToString();
         if (GameManager.Instance.idItemsDestroyed.Contains(uniqueID))
         {

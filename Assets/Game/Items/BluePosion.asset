@@ -1,0 +1,20 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7df0a51ae613b6c4084b9ff96813dca6, type: 3}
+  m_Name: BluePosion
+  m_EditorClassIdentifier: 
+  id: 7
+  itemName: BluePosion
+  stackable: 1
+  type: 1
+  price: 100
+  icon: {fileID: 1401158471, guid: 73d1d85564c858747901fca412622f6b, type: 3}

@@ -26,10 +26,17 @@ public class OpenChest : MonoBehaviour
     {
         if (Input.GetKey(KeyCode.F))
         {
-            miniGame.SetActive(true);
-            if (chestType == ChestType.PuzzelPassword)
+            if (miniGame != null)
             {
-                miniGame.GetComponent<PuzzelPassword>().correctPassword = Password;
+                miniGame.SetActive(true);
+                if (chestType == ChestType.PuzzelPassword)
+                {
+                    miniGame.GetComponent<PuzzelPassword>().correctPassword = Password;
+                }
+            }
+            else
+            {
+                InventoryManager.Instance.isWinMiniGame = true;
             }
         }
         if (InventoryManager.Instance.isWinMiniGame)

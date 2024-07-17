@@ -5,7 +5,6 @@ using UnityEngine;
 public class PatrolState : IState
 {
     float timer = 0;
-    float duration;
     //range attack
     float attackRange = 2f;
     float attackRangeEagle = 5.2f;
@@ -16,7 +15,6 @@ public class PatrolState : IState
     public void OnEnter(BotController bot)
     {
         bot.SetRandomTargetFollow();
-        duration = Random.Range(1f, 4f);
         if (bot.enemyType == EnemyType.Boss_Tortoise)
         {
             chaseRange = 25f;
@@ -26,11 +24,19 @@ public class PatrolState : IState
     {
         timer += Time.deltaTime;
         bot.FollowTarget(chaseRange);
-        if (!bot.IsHaveTargetInRange(chaseRange) && timer > duration)
+        if (bot.checkDestination() && !bot.IsHaveTargetInRange(chaseRange))
         {
             bot.ChangeState(new IdleState());
         }
-        if (bot.enemyType == EnemyType.Normal || bot.enemyType == EnemyType.Boss_minotaur || bot.enemyType == EnemyType.Enemy_Boom)
+        GetAttack(bot);
+    }
+    public void OnExit(BotController bot)
+    {
+
+    }
+    public void GetAttack(BotController bot)
+    {
+        if (bot.enemyType == EnemyType.Normal || bot.enemyType == EnemyType.Enemy_Boom)
         {
             if (bot.IsHaveTargetInRange(attackRange) && timer > 1f)
             {
@@ -39,6 +45,10 @@ public class PatrolState : IState
         }
         if (bot.enemyType == EnemyType.Boss_minotaur)
         {
+            if (bot.IsHaveTargetInRange(attackRange) && timer > 3f)
+            {
+                bot.ChangeState(new AttackState("BossCloseRange"));
+            }
             if (bot.IsHaveTargetInRange(jumpattackRange))
             {
                 bot.BossJumpAttack();
@@ -62,9 +72,5 @@ public class PatrolState : IState
                 bot.ChangeState(new AttackState("MediumRange"));
             }
         }
-    }
-    public void OnExit(BotController bot)
-    {
-
     }
 }

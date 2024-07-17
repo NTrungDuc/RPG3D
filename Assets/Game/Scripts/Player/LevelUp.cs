@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,6 +15,7 @@ public class LevelUp : MonoBehaviour
     public Image expBar;
     public float currentCoin = 100;
     public Text coin;
+    public Text levelPlayer;
     public void GainXP(int xp, float index)
     {
         currentXP += xp;
@@ -24,6 +26,7 @@ public class LevelUp : MonoBehaviour
         }
         UpdateUI();
     }
+    
     int CalculateRequiredXP()
     {
         return Mathf.RoundToInt(baseRequiredXP * Mathf.Pow(xpMultiplier, level - 1));
@@ -42,6 +45,7 @@ public class LevelUp : MonoBehaviour
         expBar.fillAmount = (float) currentXP / (float) CalculateRequiredXP();
         textEXP.text = currentXP.ToString() + "/" + CalculateRequiredXP();
         coin.text = currentCoin.ToString();
+        levelPlayer.text = "LV: " + level.ToString();
     }
     void GetCoin(float coinDropped)
     {
@@ -59,6 +63,18 @@ public class LevelUp : MonoBehaviour
         currentCoin = data.coin;
         level = data.level;
         currentXP = data.Exp;
+        UpdateUI();
+    }
+
+    //cheat
+    public void HackEXP()
+    {
+        currentXP += 100;
+        GetCoin(100);
+        if (currentXP >= CalculateRequiredXP())
+        {
+            LevelUpPlayer();
+        }
         UpdateUI();
     }
 }

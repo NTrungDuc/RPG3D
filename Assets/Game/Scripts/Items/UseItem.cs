@@ -5,7 +5,7 @@ using static UnityEditor.Progress;
 
 public class UseItem : MonoBehaviour
 {
-    public enum Type { PlayerSword, EnemyAxe, PosionRed, PlayerSkill, Staves, EnemyKick, EnemyBoomb, EagleAttack, TotoiseAttack };
+    public enum Type { PlayerSword, EnemyAxe, PosionRed, PlayerSkill, Staves, EnemyKick, EnemyBoomb, EagleAttack, TotoiseAttack, PosionBlue };
     public Type type;
     [SerializeField] public float value;
     [SerializeField] public Items item;
@@ -13,13 +13,17 @@ public class UseItem : MonoBehaviour
     public bool hasSkill = false;
     public void Use()
     {
-        if (type == Type.PosionRed)
+        if (type == Type.PosionRed || type == Type.PosionBlue)
         {
             if (Input.GetMouseButtonUp(0))
             {
                 if (RemoveItem(item))
                 {
-                    PlayerMovement.Instance.UsePosion(value);
+                    int posionType = type == Type.PosionRed ? 0 : (type == Type.PosionBlue ? 1 : -1);
+                    if (posionType != -1)
+                    {
+                        PlayerMovement.Instance.UsePosion(value, posionType);
+                    }
                 }
             }
         }

@@ -29,6 +29,7 @@ public class BotController : MonoBehaviour
     [SerializeField] private Transform centrePoint;
     public bool isJumpAttack = true;
     private Animator animator;
+    bool isDeath = false;
     private IState currentState;
     public IState CurrentState { get => currentState; set => currentState = value; }
 
@@ -49,24 +50,20 @@ public class BotController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (isDeath)
+        {
+            return;
+        }
         if (currentState != null)
         {
             currentState.OnExecute(this);
         }
-        checkDestination();
     }
     public void OnInit()
     {
         currentHealth = enemyMaxHealth;
         initialSpeed = agent.speed;
         ChangeState(new IdleState());
-    }
-    public void checkDestination()
-    {
-        if (Vector3.Distance(transform.position, patrolPoint) < 2.8f)
-        {
-            ChangeAnim(Constant.ANIM_RUN, false);
-        }
     }
     public void SetRandomTargetFollow()
     {
@@ -106,6 +103,14 @@ public class BotController : MonoBehaviour
         float distance = Vector3.Distance(Target.position, transform.position);
         //Debug.Log(distance);
         if (distance < range)
+        {
+            return true;
+        }
+        return false;
+    }
+    public bool checkDestination()
+    {
+        if(!agent.pathPending && agent.remainingDistance <= agent.stoppingDistance)
         {
             return true;
         }
@@ -217,9 +222,7 @@ public class BotController : MonoBehaviour
     }
     private IEnumerator WaitForAnimationJumpAttackToEnd()
     {
-        yield return new WaitForSeconds(1.5f);
-        CameraShake.Instance.ShakeCamera(5f, 1f);
-        yield return new WaitForSeconds(1.5f);
+        yield return new WaitForSeconds(3f);
         isJumpAttack = false;
         agent.speed = initialSpeed;
     }
@@ -258,8 +261,9 @@ public class BotController : MonoBehaviour
     }
     public IEnumerator OnDeath()
     {
-        stopMoving();
-        ChangeAnim(Constant.ANIM_DIE, true);
+        isDeath = true;
+        //ChangeAnim(Constant.ANIM_DIE, true);
+        animator.SetTrigger(Constant.ANIM_DIE);
         yield return new WaitForSeconds(3f);
         gameObject.SetActive(false);
         playerExp.GainXP(experienceValue, coinDropped);

@@ -56,4 +56,24 @@ public class GameManager : MonoBehaviour
             Debug.Log("Save file not found");
         }
     }
+    public void ClearJSONData()
+    {
+        string path = Application.persistentDataPath + "/savefile.json";
+        if (File.Exists(path))
+        {
+            allItemsInventory.Clear();
+            idItemsDestroyed.Clear();
+            string json = File.ReadAllText(path);
+
+            playerData = JsonUtility.FromJson<PlayerData>(json);
+
+            playerData = new PlayerData {level = 1, health = 100, stamina = 90, coin = 100 };
+
+            PlayerMovement.Instance.LoadDataPlayer(playerData);
+
+            json = JsonUtility.ToJson(playerData);
+
+            File.WriteAllText(path, json);
+        }
+    }
 }

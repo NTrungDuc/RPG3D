@@ -5,7 +5,7 @@ using UnityEngine;
 public class AttackState : IState
 {
     float timer = 0;
-    float timeDelay = 1f;
+    float timeDelay = 2f;
     private string attackType;
 
     public AttackState(string attackType)
@@ -20,11 +20,14 @@ public class AttackState : IState
         switch (attackType)
         {
             case "CloseRange":
+                timeDelay = 1f;
                 bot.CloseRangeAttack();
                 break;
-            case "MediumRange":
-                timeDelay = 2f;
+            case "MediumRange":                
                 bot.MediumRangeAttack();
+                break;
+            case "BossCloseRange":
+                bot.CloseRangeAttack();
                 break;
         }
     }
