@@ -41,4 +41,12 @@ public class ShieldUpgrade : MonoBehaviour
         currentShield = shieldPrefabs[shieldLevel - 1];
         currentShield.SetActive(true);
     }
+    public void SaveLevelShield(PlayerData data)
+    {
+        data.levelShield = shieldLevel;
+    }
+    public void LoadLevelShield(PlayerData data)
+    {
+        shieldLevel = data.levelShield;
+    }
 }

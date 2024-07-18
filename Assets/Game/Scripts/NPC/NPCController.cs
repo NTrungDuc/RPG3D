@@ -43,7 +43,7 @@ public class NPCController : MonoBehaviour
                 }
                 else
                 {
-                    if (chat.options != null)
+                    if (chat.options.Length != 0)
                     {
                         for (int i = 0; i < chat.options.Length; i++)
                         {
@@ -54,6 +54,7 @@ public class NPCController : MonoBehaviour
                     }
                     else
                     {
+                        PlayerMovement.Instance.LockCursor(false, CursorLockMode.Locked);
                         ResetValue();
                     }
                 }

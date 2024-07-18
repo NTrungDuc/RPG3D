@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
 
             playerData = JsonUtility.FromJson<PlayerData>(json);
 
-            playerData = new PlayerData {level = 1, health = 100, stamina = 90, coin = 100 };
+            playerData = new PlayerData {level = 1, levelShield = 1, health = 100, stamina = 90, coin = 100 };
 
             PlayerMovement.Instance.LoadDataPlayer(playerData);
 

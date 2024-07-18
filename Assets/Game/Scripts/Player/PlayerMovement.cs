@@ -398,12 +398,14 @@ public class PlayerMovement : MonoBehaviour
         data.health = maxHealth;
         data.stamina = maxStamina;
         levelUp.SaveDataLevelUp(data);
+        shield.SaveLevelShield(data);
     }
     public void LoadDataPlayer(PlayerData data)
     {
         maxHealth = data.health;
         maxStamina = data.stamina;
         levelUp.LoadDataLevelUp(data);
+        shield.LoadLevelShield(data);
     }
     public void takeDamage(float damage)
     {

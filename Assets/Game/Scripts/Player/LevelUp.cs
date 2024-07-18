@@ -16,6 +16,8 @@ public class LevelUp : MonoBehaviour
     public float currentCoin = 100;
     public Text coin;
     public Text levelPlayer;
+    [SerializeField] private ShieldUpgrade shield;
+    int levelUpShield = 4;
     public void GainXP(int xp, float index)
     {
         currentXP += xp;
@@ -39,6 +41,7 @@ public class LevelUp : MonoBehaviour
 
         //upgrade hp,skill....
         PlayerMovement.Instance.UpgradeStats(1.2f, 1.1f, level);
+        UpShield();
     }
     void UpdateUI()
     {
@@ -65,7 +68,13 @@ public class LevelUp : MonoBehaviour
         currentXP = data.Exp;
         UpdateUI();
     }
-
+    public void UpShield()
+    {
+        if (level >= levelUpShield)
+        {
+            shield.UpgradeShield();
+        }
+    }
     //cheat
     public void HackEXP()
     {
