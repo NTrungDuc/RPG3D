@@ -7,6 +7,9 @@ public class AppearGate : MonoBehaviour
     [SerializeField] private GameObject door;
     private void OnDisable()
     {
-        door.SetActive(true);
+        if (door != null)
+        {
+            door.SetActive(true);
+        }
     }
 }
