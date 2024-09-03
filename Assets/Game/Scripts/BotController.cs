@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.SocialPlatforms.Impl;
+using UnityEngine.UI;
 
 public class BotController : MonoBehaviour
 {
@@ -30,6 +31,7 @@ public class BotController : MonoBehaviour
     public bool isJumpAttack = true;
     private Animator animator;
     bool isDeath = false;
+    [SerializeField] private Image imageHP;
     private IState currentState;
     public IState CurrentState { get => currentState; set => currentState = value; }
 
@@ -57,6 +59,11 @@ public class BotController : MonoBehaviour
         if (currentState != null)
         {
             currentState.OnExecute(this);
+        }
+        if (PlayerMovement.Instance.state == PlayerState.Die)
+        {
+            currentHealth = enemyMaxHealth;
+            updateHealthBar();
         }
     }
     public void OnInit()
@@ -253,10 +260,18 @@ public class BotController : MonoBehaviour
     public void takeDamage(float damage)
     {
         currentHealth -= damage;
+        updateHealthBar();
         if (currentHealth <= 0)
         {
             //die
             StartCoroutine(OnDeath());
+        }
+    }
+    public void updateHealthBar()
+    {
+        if (imageHP != null)
+        {
+            imageHP.fillAmount = (float)currentHealth / enemyMaxHealth;
         }
     }
     public IEnumerator OnDeath()

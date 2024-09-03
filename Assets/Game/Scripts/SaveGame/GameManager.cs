@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 using System.IO;
-using static UnityEditor.Progress;
 using System;
 
 public class GameManager : MonoBehaviour

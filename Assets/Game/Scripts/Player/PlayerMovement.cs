@@ -432,8 +432,8 @@ public class PlayerMovement : MonoBehaviour
         yield return new WaitForSeconds(5f);
         state = PlayerState.Idle;
         m_Animator.SetTrigger(Constant.ANIM_IDLE);
-        currentHealth = maxHealth;
-        staminaValue = maxStamina;
+        healthBar.value = currentHealth = maxHealth;
+        staminaBar.value = staminaValue = maxStamina;
         transform.position = currentPos;
         yield return new WaitForSeconds(0.5f);
         m_Animator.ResetTrigger(Constant.ANIM_IDLE);
