@@ -9717,4 +9717,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 8
-  value: 15
+  value: 1
+  item: {fileID: 0}
+  hasSkill: 0

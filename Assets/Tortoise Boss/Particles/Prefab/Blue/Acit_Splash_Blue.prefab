@@ -4845,7 +4845,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   type: 8
-  value: 10
+  value: 1
+  item: {fileID: 0}
+  hasSkill: 0
 --- !u!65 &2337434045520710403
 BoxCollider:
   m_ObjectHideFlags: 0

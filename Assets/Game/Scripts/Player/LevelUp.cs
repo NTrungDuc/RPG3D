@@ -17,7 +17,7 @@ public class LevelUp : MonoBehaviour
     public Text coin;
     public Text levelPlayer;
     [SerializeField] private ShieldUpgrade shield;
-    int levelUpShield = 4;
+    int levelUpShield = 2;
     public void GainXP(int xp, float index)
     {
         currentXP += xp;

@@ -23,6 +23,7 @@ public class ShieldUpgrade : MonoBehaviour
             shieldLevel++;
             float newShieldValue = shieldValue * Mathf.Pow(1.3f, shieldLevel);
             shieldValue = newShieldValue;
+            PlayerPrefs.SetFloat("ShieldValue", shieldValue);
             EquipShield(shieldLevel);
             Debug.Log("Shield upgraded to level " + shieldLevel);
         }
@@ -40,6 +41,7 @@ public class ShieldUpgrade : MonoBehaviour
         }
         currentShield = shieldPrefabs[shieldLevel - 1];
         currentShield.SetActive(true);
+        shieldValue = PlayerPrefs.GetFloat("ShieldValue", 2);
     }
     public void SaveLevelShield(PlayerData data)
     {

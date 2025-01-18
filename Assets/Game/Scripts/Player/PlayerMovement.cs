@@ -155,7 +155,7 @@ public class PlayerMovement : MonoBehaviour
         {
             if (staminaValue < maxStamina)
             {
-                ModifyStamina(2);
+                ModifyStamina(10);
             }
         }
     }
